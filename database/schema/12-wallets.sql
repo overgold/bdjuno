@@ -51,3 +51,11 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_set_extra (
     address     TEXT        NOT NULL,                       -- set extra address
     extras      JSONB                                       -- set extra extras
 );
+
+-- +migrate Down
+DROP TABLE IF EXISTS vipcoin_chain_wallets_wallets CASCADE;
+DROP TABLE IF EXISTS vipcoin_chain_wallets_set_wallet_kind CASCADE;
+DROP TABLE IF EXISTS vipcoin_chain_wallets_set_wallet_state CASCADE;
+DROP TABLE IF EXISTS vipcoin_chain_wallets_create_create_wallet_with_balance CASCADE;
+DROP TABLE IF EXISTS vipcoin_chain_wallets_set_default_wallet CASCADE;
+DROP TABLE IF EXISTS vipcoin_chain_wallets_set_extra CASCADE;
