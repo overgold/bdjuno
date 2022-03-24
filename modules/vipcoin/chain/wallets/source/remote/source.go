@@ -30,17 +30,5 @@ func NewSource(source *remote.Source, walletClient walletstypes.QueryClient) *So
 
 // GetWallets implements bankkeeper.Source
 func (s Source) GetWallets(addresses []string, height int64) ([]*walletstypes.Wallet, error) {
-	//header := remote.GetHeightRequestHeader(height)
-	//
-	//var wallets []*walletstypes.Wallet
-	//for _, address := range addresses {
-	//	walletRes, err := s.wallets.WalletAll(s.Ctx, &walletstypes.QueryAllWalletRequest{AccountAddress: address}, header)
-	//	if err != nil {
-	//		return nil, fmt.Errorf("error while getting all balances: %s", err)
-	//	}
-	//
-	//	wallets = append(wallets, walletRes.Wallets...)
-	//}
-
 	return []*walletstypes.Wallet{}, nil
 }
