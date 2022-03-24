@@ -30,5 +30,6 @@ func NewSource(source *remote.Source, walletClient walletstypes.QueryClient) *So
 
 // GetWallets implements bankkeeper.Source
 func (s Source) GetWallets(addresses []string, height int64) ([]*walletstypes.Wallet, error) {
+
 	return []*walletstypes.Wallet{}, nil
 }
