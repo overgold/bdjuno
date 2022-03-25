@@ -124,3 +124,13 @@ func toKindsDomain(kinds pq.Int32Array) []accountstypes.AccountKind {
 
 	return result
 }
+
+// parseID - helper function for convert
+func parseID(data []int64) []interface{} {
+	result := make([]interface{}, 0, len(data))
+	for _, id := range data {
+		result = append(result, id)
+	}
+
+	return result
+}

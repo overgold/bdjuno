@@ -201,12 +201,7 @@ func getAffiliates(db *sqlx.DB, affiliatesID pq.Int64Array) ([]*accountstypes.Af
 		return []*accountstypes.Affiliate{}, nil
 	}
 
-	arguments := map[string][]interface{}{"id": {}}
-	for _, val := range affiliatesID {
-		arguments["id"] = append(arguments["id"], val)
-	}
-
-	query, args := filter.NewFilter().SetArgumentsMap(arguments).
+	query, args := filter.NewFilter().SetArgument("id", parseID(affiliatesID)...).
 		Build("vipcoin_chain_accounts_affiliates", `id, address, affiliation_kind, extras`)
 
 	var result []types.DBAffiliates
