@@ -1,7 +1,10 @@
 package main
 
 import (
+	chainapp "git.ooo.ua/vipcoin/chain/app"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	gaiaapp "github.com/cosmos/gaia/v7/app"
+	"github.com/forbole/bdjuno/v2/types/config"
 	"github.com/forbole/juno/v3/cmd"
 	initcmd "github.com/forbole/juno/v3/cmd/init"
 	parsetypes "github.com/forbole/juno/v3/cmd/parse/types"
@@ -10,13 +13,9 @@ import (
 
 	migratecmd "github.com/forbole/bdjuno/v3/cmd/migrate"
 	parsecmd "github.com/forbole/bdjuno/v3/cmd/parse"
-
-	"github.com/forbole/bdjuno/v3/types/config"
-
 	"github.com/forbole/bdjuno/v3/database"
 	"github.com/forbole/bdjuno/v3/modules"
-
-	gaiaapp "github.com/cosmos/gaia/v7/app"
+	"github.com/forbole/bdjuno/v3/types/config"
 )
 
 func main() {
@@ -56,6 +55,7 @@ func main() {
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
 		gaiaapp.ModuleBasics,
+		chainapp.ModuleBasics,
 	}
 }
 
