@@ -12,12 +12,16 @@ import (
 	"github.com/forbole/bdjuno/v2/modules/mint"
 	"github.com/forbole/bdjuno/v2/modules/modules"
 	"github.com/forbole/bdjuno/v2/modules/pricefeed"
+	"github.com/forbole/bdjuno/v2/modules/slashing"
 	"github.com/forbole/bdjuno/v2/modules/staking"
 	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts"
+	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets"
 	"github.com/forbole/bdjuno/v2/utils"
 	jmodules "github.com/forbole/juno/v2/modules"
 	"github.com/forbole/juno/v2/modules/messages"
+	"github.com/forbole/juno/v2/modules/pruning"
 	"github.com/forbole/juno/v2/modules/registrar"
+	"github.com/forbole/juno/v2/modules/telemetry"
 	jmodules "github.com/forbole/juno/v3/modules"
 	"github.com/forbole/juno/v3/modules/messages"
 	"github.com/forbole/juno/v3/modules/pruning"
@@ -93,6 +97,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
 
 	vipcoinAccountsModule := accounts.NewModule(sources.VipcoinAccountsSource, cdc, db)
+	vipcoinWalletsModule := wallets.NewModule(r.parser, sources.VipcoinWalletsSource, cdc, db)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),
@@ -113,5 +118,6 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		stakingModule,
 
 		vipcoinAccountsModule,
+		vipcoinWalletsModule,
 	}
 }
