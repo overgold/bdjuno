@@ -1,4 +1,3 @@
--- +migrate Up
 CREATE TYPE DEC_COIN AS
 (
     denom  TEXT,

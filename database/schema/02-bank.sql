@@ -1,4 +1,3 @@
--- +migrate Up
 /* ---- SUPPLY ---- */
 
 CREATE TABLE supply

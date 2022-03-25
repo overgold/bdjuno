@@ -1,4 +1,3 @@
--- +migrate Up
 /* ---- PARAMS ---- */
 
 CREATE TABLE mint_params

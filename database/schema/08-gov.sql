@@ -1,4 +1,3 @@
--- +migrate Up
 CREATE TABLE gov_params
 (
     one_row_id     BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,

@@ -1,4 +1,3 @@
--- +migrate Up
 CREATE TABLE validator_signing_info
 (
     validator_address     TEXT                        NOT NULL PRIMARY KEY,
