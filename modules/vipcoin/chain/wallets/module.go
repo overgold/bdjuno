@@ -7,6 +7,7 @@ package wallets
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/forbole/bdjuno/v2/database"
+	"github.com/forbole/bdjuno/v2/database/vipcoin/chain/wallets"
 	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source"
 	"github.com/forbole/juno/v2/modules"
 	junomessages "github.com/forbole/juno/v2/modules/messages"
@@ -23,6 +24,7 @@ var (
 type Module struct {
 	cdc           codec.Marshaler
 	db            *database.Db
+	walletsRepo   wallets.Repository
 	messageParser junomessages.MessageAddressesParser
 	keeper        source.Source
 }
@@ -34,6 +36,7 @@ func NewModule(
 	return &Module{
 		cdc:           cdc,
 		db:            db,
+		walletsRepo:   *wallets.NewRepository(db.Sqlx, cdc),
 		messageParser: messageParser,
 		keeper:        keeper,
 	}
