@@ -202,6 +202,7 @@ func getAffiliates(db *sqlx.DB, affiliatesID pq.Int64Array) ([]*accountstypes.Af
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	query, args := filter.NewFilter().SetArgument("id", parseID(affiliatesID)...).
 =======
 	arguments := map[string][]interface{}{"id": {}}
@@ -211,6 +212,9 @@ func getAffiliates(db *sqlx.DB, affiliatesID pq.Int64Array) ([]*accountstypes.Af
 
 	query, args := filter.NewFilter().SetArgumentsMap(arguments).
 >>>>>>> VC-4212 add account state
+=======
+	query, args := filter.NewFilter().SetArgument("id", parseID(affiliatesID)...).
+>>>>>>> fix after review
 		Build("vipcoin_chain_accounts_affiliates", `id, address, affiliation_kind, extras`)
 
 	var result []types.DBAffiliates
