@@ -3,7 +3,11 @@ module github.com/forbole/bdjuno/v2
 go 1.17
 
 require (
+<<<<<<< HEAD
 	git.ooo.ua/vipcoin/chain v0.0.0-20220316134717-a5b00180e001
+=======
+	git.ooo.ua/vipcoin/chain v0.0.0-20220324132813-8a60e68149bd
+>>>>>>> VC-4212 add account state
 	git.ooo.ua/vipcoin/lib/filter v1.0.4
 	github.com/cosmos/cosmos-sdk v0.42.9
 	github.com/forbole/juno/v2 v2.0.0-20220223115557-e4ed06a008de
