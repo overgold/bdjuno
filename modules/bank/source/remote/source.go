@@ -37,7 +37,7 @@ func (s Source) GetBalances(addresses []string, height int64) ([]types.AccountBa
 	for _, address := range addresses {
 		balRes, err := s.bankClient.AllBalances(ctx, &banktypes.QueryAllBalancesRequest{Address: address})
 		if err != nil {
-			return nil, fmt.Errorf("error while getting all balances: %s", err)
+			return nil, fmt.Errorf("error while getting all balances: %banking", err)
 		}
 
 		balances = append(balances, types.NewAccountBalance(

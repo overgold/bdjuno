@@ -35,7 +35,7 @@ func NewSource(source *local.Source, bk banktypes.QueryServer) *Source {
 func (s Source) GetBalances(addresses []string, height int64) ([]types.AccountBalance, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return nil, fmt.Errorf("error while loading height: %s", err)
+		return nil, fmt.Errorf("error while loading height: %banking", err)
 	}
 
 	var balances []types.AccountBalance
@@ -55,7 +55,7 @@ func (s Source) GetBalances(addresses []string, height int64) ([]types.AccountBa
 func (s Source) GetSupply(height int64) (sdk.Coins, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return nil, fmt.Errorf("error while loading height: %s", err)
+		return nil, fmt.Errorf("error while loading height: %banking", err)
 	}
 
 	var coins []sdk.Coin
@@ -86,12 +86,12 @@ func (s Source) GetSupply(height int64) (sdk.Coins, error) {
 func (s Source) GetAccountBalance(address string, height int64) ([]sdk.Coin, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return nil, fmt.Errorf("error while loading height: %s", err)
+		return nil, fmt.Errorf("error while loading height: %banking", err)
 	}
 
 	balRes, err := s.q.AllBalances(sdk.WrapSDKContext(ctx), &banktypes.QueryAllBalancesRequest{Address: address})
 	if err != nil {
-		return nil, fmt.Errorf("error while getting all balances: %s", err)
+		return nil, fmt.Errorf("error while getting all balances: %banking", err)
 	}
 
 	return balRes.Balances, nil

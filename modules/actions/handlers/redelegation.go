@@ -19,13 +19,13 @@ func RedelegationHandler(ctx *types.Context, payload *types.Payload) (interface{
 		return nil, err
 	}
 
-	// Get delegator's redelegations
+	// Get delegator'banking redelegations
 	redelegations, err := ctx.Sources.StakingSource.GetRedelegations(height, &stakingtypes.QueryRedelegationsRequest{
 		DelegatorAddr: payload.GetAddress(),
 		Pagination:    payload.GetPagination(),
 	})
 	if err != nil {
-		return nil, fmt.Errorf("error while getting delegator redelegations: %s", err)
+		return nil, fmt.Errorf("error while getting delegator redelegations: %banking", err)
 	}
 
 	redelegationsList := make([]types.Redelegation, len(redelegations.RedelegationResponses))

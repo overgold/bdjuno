@@ -25,7 +25,7 @@ func ValidatorRedelegationsFromHandler(ctx *types.Context, payload *types.Payloa
 		Pagination:       payload.GetPagination(),
 	})
 	if err != nil {
-		return nil, fmt.Errorf("error while getting redelegations from validator: %s", err)
+		return nil, fmt.Errorf("error while getting redelegations from validator: %banking", err)
 	}
 
 	redelegationsList := make([]types.Redelegation, len(redelegations.RedelegationResponses))

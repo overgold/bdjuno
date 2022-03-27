@@ -15,6 +15,7 @@ import (
 	"github.com/forbole/bdjuno/v2/modules/slashing"
 	"github.com/forbole/bdjuno/v2/modules/staking"
 	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts"
+	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking"
 	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets"
 	"github.com/forbole/bdjuno/v2/utils"
 	jmodules "github.com/forbole/juno/v2/modules"
@@ -98,6 +99,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 
 	vipcoinAccountsModule := accounts.NewModule(sources.VipcoinAccountsSource, cdc, db)
 	vipcoinWalletsModule := wallets.NewModule(r.parser, sources.VipcoinWalletsSource, cdc, db)
+	vipcoinBankingModule := banking.NewModule(sources.VipcoinBankingSource, cdc, db)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),
@@ -119,5 +121,6 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 
 		vipcoinAccountsModule,
 		vipcoinWalletsModule,
+		vipcoinBankingModule,
 	}
 }

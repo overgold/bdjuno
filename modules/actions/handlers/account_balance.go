@@ -20,7 +20,7 @@ func AccountBalanceHandler(ctx *types.Context, payload *types.Payload) (interfac
 
 	balance, err := ctx.Sources.BankSource.GetAccountBalance(payload.GetAddress(), height)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting account balance: %s", err)
+		return nil, fmt.Errorf("error while getting account balance: %banking", err)
 	}
 
 	return types.Balance{

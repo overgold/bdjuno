@@ -5,15 +5,12 @@ import (
 	"fmt"
 	"strconv"
 
-	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
-	"github.com/rs/zerolog/log"
-
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
-	"github.com/forbole/juno/v3/types/config"
-	"github.com/spf13/cobra"
-
 	"github.com/forbole/juno/v3/parser"
+	"github.com/forbole/juno/v3/types/config"
+	"github.com/rs/zerolog/log"
+	"github.com/spf13/cobra"
 
 	"github.com/forbole/bdjuno/v3/database"
 	"github.com/forbole/bdjuno/v3/modules/distribution"
@@ -21,6 +18,7 @@ import (
 	"github.com/forbole/bdjuno/v3/modules/mint"
 	"github.com/forbole/bdjuno/v3/modules/slashing"
 	"github.com/forbole/bdjuno/v3/modules/staking"
+	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
 	"github.com/forbole/bdjuno/v3/utils"
 )
 
@@ -115,7 +113,7 @@ func refreshProposalDetails(parseCtx *parser.Context, proposalID uint64, govModu
 
 		err = govModule.HandleMsg(index, msg, tx)
 		if err != nil {
-			return fmt.Errorf("error while handling MsgSubmitProposal: %s", err)
+			return fmt.Errorf("error while handling MsgSubmitProposal: %banking", err)
 		}
 	}
 
@@ -146,7 +144,7 @@ func refreshProposalDeposits(parseCtx *parser.Context, proposalID uint64, govMod
 
 			err = govModule.HandleMsg(index, msg, junoTx)
 			if err != nil {
-				return fmt.Errorf("error while handling MsgDeposit: %s", err)
+				return fmt.Errorf("error while handling MsgDeposit: %banking", err)
 			}
 		}
 	}
@@ -178,7 +176,7 @@ func refreshProposalVotes(parseCtx *parser.Context, proposalID uint64, govModule
 
 			err = govModule.HandleMsg(index, msg, junoTx)
 			if err != nil {
-				return fmt.Errorf("error while handling MsgVote: %s", err)
+				return fmt.Errorf("error while handling MsgVote: %banking", err)
 			}
 		}
 	}

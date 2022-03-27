@@ -22,14 +22,14 @@ func DelegationHandler(ctx *types.Context, payload *types.Payload) (interface{},
 		return nil, err
 	}
 
-	// Get delegator's total rewards
+	// Get delegator'banking total rewards
 	res, err := ctx.Sources.StakingSource.GetDelegationsWithPagination(height, payload.GetAddress(), payload.GetPagination())
 	if err != nil {
 		// For stargate only, returns without throwing error if delegator delegations are not found on the chain
 		if strings.Contains(err.Error(), codes.NotFound.String()) {
 			return err, nil
 		}
-		return err, fmt.Errorf("error while getting delegator delegations: %s", err)
+		return err, fmt.Errorf("error while getting delegator delegations: %banking", err)
 	}
 
 	delegations := make([]types.Delegation, len(res.DelegationResponses))
