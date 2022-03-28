@@ -28,11 +28,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return m.handleMsgRegisterUser(tx, index, accountMsg)
 	default:
 		errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, accountMsg)
-		fmt.Println(sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg))
-		// return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
+		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
 	}
-
-	return nil
 }
 
 // handleMsgRegisterUser allows to properly handle a handleMsgRegisterUser
@@ -67,7 +64,7 @@ func (m *Module) handleMsgRegisterUser(tx *juno.Tx, index int, msg *types.MsgReg
 
 // handleMsgSetKinds allows to properly handle a handleMsgSetKinds
 func (m *Module) handleMsgSetKinds(tx *juno.Tx, index int, msg *types.MsgSetKinds) error {
-	if err := m.accountRepo.SaveSetKinds(msg); err != nil {
+	if err := m.accountRepo.SaveKinds(msg); err != nil {
 		return err
 	}
 

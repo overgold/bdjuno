@@ -16,8 +16,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func TestRepository_SaveSetKinds(t *testing.T) {
-	// db, err := sqlx.Connect("pgx", "host=10.10.1.79 port=5432 user=postgres dbname=juno password=postgres sslmode=disable")
+func TestRepository_SaveKinds(t *testing.T) {
 	db, err := sqlx.Connect("pgx", "host=localhost port=5432 user=postgres dbname=juno password=postgres sslmode=disable")
 	if err != nil {
 		t.Fatal(err)
@@ -51,15 +50,14 @@ func TestRepository_SaveSetKinds(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := accountsdb.NewRepository(db, codec.Marshaler)
 
-			if err := r.SaveSetKinds(tt.args.msg...); (err != nil) != tt.wantErr {
-				t.Errorf("Repository.SaveSetKinds() error = %v, wantErr %v", err, tt.wantErr)
+			if err := r.SaveKinds(tt.args.msg...); (err != nil) != tt.wantErr {
+				t.Errorf("Repository.SaveKinds() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
 }
 
-func TestRepository_GetSetKinds(t *testing.T) {
-	// db, err := sqlx.Connect("pgx", "host=10.10.1.79 port=5432 user=postgres dbname=juno password=postgres sslmode=disable")
+func TestRepository_GetKinds(t *testing.T) {
 	db, err := sqlx.Connect("pgx", "host=localhost port=5432 user=postgres dbname=juno password=postgres sslmode=disable")
 	if err != nil {
 		t.Fatal(err)
@@ -96,13 +94,13 @@ func TestRepository_GetSetKinds(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := accountsdb.NewRepository(db, codec.Marshaler)
 
-			got, err := r.GetSetKinds(tt.args.accfilter)
+			got, err := r.GetKinds(tt.args.accfilter)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Repository.GetSetKinds() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Repository.GetKinds() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Repository.GetSetKinds() = %v, want %v", got, tt.want)
+				t.Errorf("Repository.GetKinds() = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -13,7 +13,8 @@ import (
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
-func (r Repository) SaveSetKinds(msg ...*accountstypes.MsgSetKinds) error {
+// SaveKinds - saves the given kinds inside the database
+func (r Repository) SaveKinds(msg ...*accountstypes.MsgSetKinds) error {
 	if len(msg) == 0 {
 		return nil
 	}
@@ -23,7 +24,9 @@ func (r Repository) SaveSetKinds(msg ...*accountstypes.MsgSetKinds) error {
 		return err
 	}
 
-	defer tx.Rollback()
+	defer func() {
+		_ = tx.Rollback()
+	}()
 
 	query := `INSERT INTO vipcoin_chain_accounts_set_kinds 
 			(creator, hash, kinds) 
@@ -36,14 +39,11 @@ func (r Repository) SaveSetKinds(msg ...*accountstypes.MsgSetKinds) error {
 		}
 	}
 
-	if err := tx.Commit(); err != nil {
-		return err
-	}
-
-	return nil
+	return tx.Commit()
 }
 
-func (r Repository) GetSetKinds(accfilter filter.Filter) ([]*accountstypes.MsgSetKinds, error) {
+// GetKinds - get the given kinds from database
+func (r Repository) GetKinds(accfilter filter.Filter) ([]*accountstypes.MsgSetKinds, error) {
 	query, args := accfilter.Build("vipcoin_chain_accounts_set_kinds",
 		`creator, hash, kinds`)
 

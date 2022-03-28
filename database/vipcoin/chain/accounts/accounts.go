@@ -64,11 +64,7 @@ func (r Repository) SaveAccounts(accounts ...*accountstypes.Account) error {
 		}
 	}
 
-	if err := tx.Commit(); err != nil {
-		return err
-	}
-
-	return nil
+	return tx.Commit()
 }
 
 func saveAffiliates(tx *sqlx.Tx, affiliates []*accountstypes.Affiliate) (pq.Int64Array, error) {
@@ -146,11 +142,7 @@ func (r Repository) UpdateAccounts(accounts ...*accountstypes.Account) error {
 		}
 	}
 
-	if err := tx.Commit(); err != nil {
-		return err
-	}
-
-	return nil
+	return tx.Commit()
 }
 
 func deleteAffiliates(tx *sqlx.Tx, affiliatesID pq.Int64Array) error {
@@ -201,20 +193,7 @@ func getAffiliates(db *sqlx.DB, affiliatesID pq.Int64Array) ([]*accountstypes.Af
 		return []*accountstypes.Affiliate{}, nil
 	}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 	query, args := filter.NewFilter().SetArgument("id", parseID(affiliatesID)...).
-=======
-	arguments := map[string][]interface{}{"id": {}}
-	for _, val := range affiliatesID {
-		arguments["id"] = append(arguments["id"], val)
-	}
-
-	query, args := filter.NewFilter().SetArgumentsMap(arguments).
->>>>>>> VC-4212 add account state
-=======
-	query, args := filter.NewFilter().SetArgument("id", parseID(affiliatesID)...).
->>>>>>> fix after review
 		Build("vipcoin_chain_accounts_affiliates", `id, address, affiliation_kind, extras`)
 
 	var result []types.DBAffiliates
