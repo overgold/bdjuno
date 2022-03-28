@@ -54,7 +54,7 @@ func (m *Module) handleMsgRegisterUser(tx *juno.Tx, index int, msg *types.MsgReg
 		Kinds:     []types.AccountKind{types.ACCOUNT_KIND_GENERAL},
 		State:     types.ACCOUNT_STATE_ACTIVE,
 		PublicKey: publicKeyAny,
-		Wallets:   []string{msg.HolderWallet},
+		Wallets:   []string{msg.HolderWallet, msg.RefRewardWallet},
 	}
 
 	// TODO: Add write wallets.
