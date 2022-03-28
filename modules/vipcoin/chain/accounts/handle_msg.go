@@ -26,6 +26,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return m.handleMsgSetKinds(tx, index, accountMsg)
 	case *types.MsgSetAffiliateAddress:
 		return m.handleMsgSetAffiliateAddress(tx, index, accountMsg)
+	case *types.MsgAccountMigrate:
+		return m.handleMsgAccountMigrate(tx, index, accountMsg)
 	case *types.MsgRegisterUser:
 		return m.handleMsgRegisterUser(tx, index, accountMsg)
 	default:
@@ -104,4 +106,9 @@ func (m *Module) handleMsgSetAffiliateAddress(tx *juno.Tx, index int, msg *types
 	}
 
 	return m.accountRepo.UpdateAccounts(acc...)
+}
+
+// handleMsgAccountMigrate allows to properly handle a handleMsgAccountMigrate
+func (m *Module) handleMsgAccountMigrate(tx *juno.Tx, index int, msg *types.MsgAccountMigrate) error {
+	return nil
 }
