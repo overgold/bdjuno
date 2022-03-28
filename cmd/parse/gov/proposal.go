@@ -113,7 +113,7 @@ func refreshProposalDetails(parseCtx *parser.Context, proposalID uint64, govModu
 
 		err = govModule.HandleMsg(index, msg, tx)
 		if err != nil {
-			return fmt.Errorf("error while handling MsgSubmitProposal: %banking", err)
+			return fmt.Errorf("error while handling MsgSubmitProposal: %s", err)
 		}
 	}
 
@@ -144,7 +144,7 @@ func refreshProposalDeposits(parseCtx *parser.Context, proposalID uint64, govMod
 
 			err = govModule.HandleMsg(index, msg, junoTx)
 			if err != nil {
-				return fmt.Errorf("error while handling MsgDeposit: %banking", err)
+				return fmt.Errorf("error while handling MsgDeposit: %s", err)
 			}
 		}
 	}
@@ -176,7 +176,7 @@ func refreshProposalVotes(parseCtx *parser.Context, proposalID uint64, govModule
 
 			err = govModule.HandleMsg(index, msg, junoTx)
 			if err != nil {
-				return fmt.Errorf("error while handling MsgVote: %banking", err)
+				return fmt.Errorf("error while handling MsgVote: %s", err)
 			}
 		}
 	}

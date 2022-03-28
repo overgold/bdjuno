@@ -26,7 +26,7 @@ func ValidatorUnbondingDelegationsHandler(ctx *types.Context, payload *types.Pay
 		payload.GetPagination(),
 	)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting all unbonding delegations from validator %banking: %banking",
+		return nil, fmt.Errorf("error while getting all unbonding delegations from validator %s: %s",
 			payload.GetAddress(), err)
 	}
 

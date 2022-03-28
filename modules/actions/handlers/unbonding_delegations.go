@@ -21,7 +21,7 @@ func UnbondingDelegationsHandler(ctx *types.Context, payload *types.Payload) (in
 	// Get all unbonding delegations for given delegator address
 	unbondingDelegations, err := ctx.Sources.StakingSource.GetUnbondingDelegations(height, payload.GetAddress(), payload.GetPagination())
 	if err != nil {
-		return nil, fmt.Errorf("error while getting delegator unbonding delegations: %banking", err)
+		return nil, fmt.Errorf("error while getting delegator unbonding delegations: %s", err)
 	}
 
 	unbondingDelegationsList := make([]types.UnbondingDelegation, len(unbondingDelegations.UnbondingResponses))

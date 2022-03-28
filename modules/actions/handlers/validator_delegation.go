@@ -20,10 +20,10 @@ func ValidatorDelegation(ctx *types.Context, payload *types.Payload) (interface{
 		return nil, err
 	}
 
-	// Get validator'banking total delegations
+	// Get validator's total delegations
 	res, err := ctx.Sources.StakingSource.GetValidatorDelegationsWithPagination(height, payload.GetAddress(), payload.GetPagination())
 	if err != nil {
-		return nil, fmt.Errorf("error while getting validator delegations: %banking", err)
+		return nil, fmt.Errorf("error while getting validator delegations: %s", err)
 	}
 
 	delegations := make([]types.Delegation, len(res.DelegationResponses))

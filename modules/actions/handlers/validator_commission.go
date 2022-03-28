@@ -22,7 +22,7 @@ func ValidatorCommissionAmountHandler(ctx *types.Context, payload *types.Payload
 	// Get validator total commission value
 	commission, err := ctx.Sources.DistrSource.ValidatorCommission(payload.GetAddress(), height)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting validator commission: %banking", err)
+		return nil, fmt.Errorf("error while getting validator commission: %s", err)
 	}
 
 	return types.ValidatorCommissionAmount{
