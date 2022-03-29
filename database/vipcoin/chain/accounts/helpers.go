@@ -204,3 +204,23 @@ func toSetAffiliateAddressDomain(msg types.DBSetAffiliateAddress) *accountstypes
 		NewAddress: msg.NewAddress,
 	}
 }
+
+// toAccountMigrateDatabase - mapping func to database model
+func toAccountMigrateDatabase(msg *accountstypes.MsgAccountMigrate) types.DBAccountMigrate {
+	return types.DBAccountMigrate{
+		Creator:   msg.Creator,
+		Address:   msg.Address,
+		Hash:      msg.Hash,
+		PublicKey: msg.PublicKey,
+	}
+}
+
+// toAccountMigrateDomain - mapping func to database model
+func toAccountMigrateDomain(msg types.DBAccountMigrate) *accountstypes.MsgAccountMigrate {
+	return &accountstypes.MsgAccountMigrate{
+		Creator:   msg.Creator,
+		Address:   msg.Address,
+		Hash:      msg.Hash,
+		PublicKey: msg.PublicKey,
+	}
+}

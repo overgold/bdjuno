@@ -1,0 +1,43 @@
+/*
+ * Copyright 2022 Business Process Technologies. All rights reserved.
+ */
+
+package accounts
+
+import (
+	"git.ooo.ua/vipcoin/chain/x/accounts/types"
+	"git.ooo.ua/vipcoin/lib/filter"
+
+	juno "github.com/forbole/juno/v2/types"
+)
+
+// handleMsgAccountMigrate allows to properly handle a handleMsgAccountMigrate
+func (m *Module) handleMsgAccountMigrate(tx *juno.Tx, index int, msg *types.MsgAccountMigrate) error {
+	if err := m.accountRepo.SaveAccountMigrate(msg); err != nil {
+		return err
+	}
+
+	acc, err := m.accountRepo.GetAccounts(filter.NewFilter().SetArgument(FieldHash, msg.Hash))
+	if err != nil {
+		return err
+	}
+
+	if len(acc) != 1 {
+		return types.ErrInvalidHashField
+	}
+
+	publicKey, err := types.PubKeyFromString(msg.PublicKey)
+	if err != nil {
+		return types.ErrInvalidPublicKeyField
+	}
+
+	pkAny, err := types.PubKeyToAny(publicKey)
+	if err != nil {
+		return types.ErrInvalidPublicKeyField
+	}
+
+	acc[0].Address = msg.Address
+	acc[0].PublicKey = pkAny
+
+	return m.accountRepo.UpdateAccounts(acc...)
+}

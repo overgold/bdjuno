@@ -107,8 +107,3 @@ func (m *Module) handleMsgSetAffiliateAddress(tx *juno.Tx, index int, msg *types
 
 	return m.accountRepo.UpdateAccounts(acc...)
 }
-
-// handleMsgAccountMigrate allows to properly handle a handleMsgAccountMigrate
-func (m *Module) handleMsgAccountMigrate(tx *juno.Tx, index int, msg *types.MsgAccountMigrate) error {
-	return nil
-}
