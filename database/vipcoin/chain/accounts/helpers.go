@@ -215,6 +215,16 @@ func toAccountMigrateDatabase(msg *accountstypes.MsgAccountMigrate) types.DBAcco
 	}
 }
 
+// toAccountsMigrateDatabase - mapping func to database model
+func toAccountsMigrateDatabase(msg ...*accountstypes.MsgAccountMigrate) []types.DBAccountMigrate {
+	result := make([]types.DBAccountMigrate, 0, len(msg))
+	for _, account := range msg {
+		result = append(result, toAccountMigrateDatabase(account))
+	}
+
+	return result
+}
+
 // toAccountMigrateDomain - mapping func to database model
 func toAccountMigrateDomain(msg types.DBAccountMigrate) *accountstypes.MsgAccountMigrate {
 	return &accountstypes.MsgAccountMigrate{

@@ -5,9 +5,6 @@
 package accounts
 
 import (
-	"context"
-	"database/sql"
-
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
 	"git.ooo.ua/vipcoin/lib/filter"
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -19,27 +16,16 @@ func (r Repository) SaveAccountMigrate(msg ...*accountstypes.MsgAccountMigrate) 
 		return nil
 	}
 
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return err
-	}
-
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
 	query := `INSERT INTO vipcoin_chain_accounts_account_migrate 
 			(creator, address, hash, public_key) 
 		VALUES 
 			(:creator, :address, :hash, :public_key)`
 
-	for _, account := range msg {
-		if _, err := tx.NamedExec(query, toAccountMigrateDatabase(account)); err != nil {
-			return err
-		}
+	if _, err := r.db.NamedExec(query, toAccountsMigrateDatabase(msg...)); err != nil {
+		return err
 	}
 
-	return tx.Commit()
+	return nil
 }
 
 // GetAccountMigrate - get the given account migrate from database

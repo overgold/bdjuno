@@ -17,12 +17,12 @@ func (m *Module) handleMsgAccountMigrate(tx *juno.Tx, index int, msg *types.MsgA
 		return err
 	}
 
-	acc, err := m.accountRepo.GetAccounts(filter.NewFilter().SetArgument(FieldHash, msg.Hash))
+	account, err := m.accountRepo.GetAccounts(filter.NewFilter().SetArgument(FieldHash, msg.Hash))
 	if err != nil {
 		return err
 	}
 
-	if len(acc) != 1 {
+	if len(account) != 1 {
 		return types.ErrInvalidHashField
 	}
 
@@ -31,13 +31,12 @@ func (m *Module) handleMsgAccountMigrate(tx *juno.Tx, index int, msg *types.MsgA
 		return types.ErrInvalidPublicKeyField
 	}
 
-	pkAny, err := types.PubKeyToAny(publicKey)
+	account[0].PublicKey, err = types.PubKeyToAny(publicKey)
 	if err != nil {
 		return types.ErrInvalidPublicKeyField
 	}
 
-	acc[0].Address = msg.Address
-	acc[0].PublicKey = pkAny
+	account[0].Address = msg.Address
 
-	return m.accountRepo.UpdateAccounts(acc...)
+	return m.accountRepo.UpdateAccounts(account...)
 }
