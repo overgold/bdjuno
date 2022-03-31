@@ -30,7 +30,7 @@ func (r Repository) GetAffiliateExtra(accfilter filter.Filter) ([]*accountstypes
 	query, args := accfilter.Build(
 		tableAffiliateExtra,
 		types.FieldCreator, types.FieldAccountHash,
-		types.FieldAffiliationHash, types.FieldExtra,
+		types.FieldAffiliationHash, types.FieldExtras,
 	)
 
 	var result []types.DBSetAffiliateExtra
