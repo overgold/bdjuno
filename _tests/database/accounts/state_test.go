@@ -7,10 +7,11 @@ import (
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
 	"git.ooo.ua/vipcoin/lib/filter"
 	"github.com/cosmos/cosmos-sdk/simapp"
-	accountsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/accounts"
-	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts"
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
+
+	"github.com/forbole/bdjuno/v2/database/types"
+	accountsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/accounts"
 )
 
 func TestRepository_SaveState(t *testing.T) {
@@ -83,7 +84,7 @@ func TestRepository_GetState(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				filter.NewFilter().SetArgument(accounts.FieldHash, "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd2"),
+				filter.NewFilter().SetArgument(types.FieldHash, "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd2"),
 			},
 			want: []*accountstypes.MsgSetState{
 				{

@@ -8,8 +8,21 @@ import (
 	extratypes "git.ooo.ua/vipcoin/chain/x/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	"github.com/forbole/bdjuno/v2/database/types"
 	"github.com/lib/pq"
+
+	"github.com/forbole/bdjuno/v2/database/types"
+)
+
+const (
+	tableState            = "vipcoin_chain_accounts_set_state"
+	tableKinds            = "vipcoin_chain_accounts_set_kinds"
+	tableRegisterUser     = "vipcoin_chain_accounts_register_user"
+	tableExtra            = "vipcoin_chain_accounts_set_extra"
+	tableAffiliateExtra   = "vipcoin_chain_accounts_set_affiliate_extra"
+	tableAffiliateAddress = "vipcoin_chain_accounts_set_affiliate_address"
+	tableAccountMigrate   = "vipcoin_chain_accounts_account_migrate"
+	tableAffiliates       = "vipcoin_chain_accounts_affiliates"
+	tableAccounts         = "vipcoin_chain_accounts_accounts"
 )
 
 // toAffiliatesDatabase - mapping func to database model

@@ -3,6 +3,7 @@ package accounts
 import (
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
 	"git.ooo.ua/vipcoin/lib/filter"
+
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
@@ -26,8 +27,11 @@ func (r Repository) SaveState(msg ...*accountstypes.MsgSetState) error {
 
 // GetState - get the given state from database
 func (r Repository) GetState(accfilter filter.Filter) ([]*accountstypes.MsgSetState, error) {
-	query, args := accfilter.Build("vipcoin_chain_accounts_set_state",
-		`creator, hash, state, reason`)
+	query, args := accfilter.Build(
+		tableState,
+		types.FieldCreator, types.FieldHash,
+		types.FieldState, types.FieldReason,
+	)
 
 	var result []types.DBSetState
 	if err := r.db.Select(&result, query, args...); err != nil {

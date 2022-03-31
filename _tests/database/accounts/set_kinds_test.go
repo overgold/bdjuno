@@ -11,9 +11,11 @@ import (
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
 	"git.ooo.ua/vipcoin/lib/filter"
 	"github.com/cosmos/cosmos-sdk/simapp"
-	accountsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/accounts"
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
+
+	"github.com/forbole/bdjuno/v2/database/types"
+	accountsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/accounts"
 )
 
 func TestRepository_SaveKinds(t *testing.T) {
@@ -83,7 +85,7 @@ func TestRepository_GetKinds(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				accfilter: filter.NewFilter().SetArgument("creator", "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g"),
+				accfilter: filter.NewFilter().SetArgument(types.FieldCreator, "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g"),
 			},
 			want: []*accountstypes.MsgSetKinds{
 				{
