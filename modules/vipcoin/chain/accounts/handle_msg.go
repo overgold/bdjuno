@@ -19,6 +19,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	switch accountMsg := msg.(type) {
 	case *types.MsgSetKinds:
 		return m.handleMsgSetKinds(tx, index, accountMsg)
+	case *types.MsgSetState:
+		return m.handleMsgSetState(tx, index, accountMsg)
 	case *types.MsgSetAffiliateAddress:
 		return m.handleMsgSetAffiliateAddress(tx, index, accountMsg)
 	case *types.MsgAccountMigrate:

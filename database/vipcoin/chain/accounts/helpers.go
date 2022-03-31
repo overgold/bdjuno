@@ -252,26 +252,6 @@ func toAccountsMigrateDatabase(msg ...*accountstypes.MsgAccountMigrate) []types.
 	return result
 }
 
-// toSetAffiliateExtraDatabase - mapping func to database model
-func toSetAffiliateExtraDatabase(msg *accountstypes.MsgSetAffiliateExtra) types.DBSetAffiliateExtra {
-	return types.DBSetAffiliateExtra{
-		Creator:         msg.Creator,
-		AccountHash:     msg.AccountHash,
-		AffiliationHash: msg.AffiliationHash,
-		Extras:          toExtrasDB(msg.Extras),
-	}
-}
-
-// toSetAffiliatesExtraDatabase - mapping func to database model
-func toSetAffiliatesExtraDatabase(msg ...*accountstypes.MsgSetAffiliateExtra) []types.DBSetAffiliateExtra {
-	result := make([]types.DBSetAffiliateExtra, 0, len(msg))
-	for _, extra := range msg {
-		result = append(result, toSetAffiliateExtraDatabase(extra))
-	}
-
-	return result
-}
-
 // toAccountMigrateDomain - mapping func to database model
 func toAccountMigrateDomain(msg types.DBAccountMigrate) *accountstypes.MsgAccountMigrate {
 	return &accountstypes.MsgAccountMigrate{
@@ -310,6 +290,26 @@ func toSetExtraDomain(msg types.DBSetAccountExtra) *accountstypes.MsgSetExtra {
 	}
 }
 
+// toSetAffiliateExtraDatabase - mapping func to database model
+func toSetAffiliateExtraDatabase(msg *accountstypes.MsgSetAffiliateExtra) types.DBSetAffiliateExtra {
+	return types.DBSetAffiliateExtra{
+		Creator:         msg.Creator,
+		AccountHash:     msg.AccountHash,
+		AffiliationHash: msg.AffiliationHash,
+		Extras:          toExtrasDB(msg.Extras),
+	}
+}
+
+// toSetAffiliatesExtraDatabase - mapping func to database model
+func toSetAffiliatesExtraDatabase(msg ...*accountstypes.MsgSetAffiliateExtra) []types.DBSetAffiliateExtra {
+	result := make([]types.DBSetAffiliateExtra, 0, len(msg))
+	for _, extra := range msg {
+		result = append(result, toSetAffiliateExtraDatabase(extra))
+	}
+
+	return result
+}
+
 // toSetAffiliateExtraDomain - mapping func to database model
 func toSetAffiliateExtraDomain(msg types.DBSetAffiliateExtra) *accountstypes.MsgSetAffiliateExtra {
 	return &accountstypes.MsgSetAffiliateExtra{
@@ -317,5 +317,35 @@ func toSetAffiliateExtraDomain(msg types.DBSetAffiliateExtra) *accountstypes.Msg
 		AccountHash:     msg.AccountHash,
 		AffiliationHash: msg.AffiliationHash,
 		Extras:          fromExtrasDB(msg.Extras),
+	}
+}
+
+// toSetStateDatabase - mapping func to database model
+func toSetStateDatabase(msg *accountstypes.MsgSetState) types.DBSetState {
+	return types.DBSetState{
+		Creator: msg.Creator,
+		Hash:    msg.Hash,
+		State:   int32(msg.State),
+		Reason:  msg.Reason,
+	}
+}
+
+// toSetStatesDatabase - mapping func to database model
+func toSetStatesDatabase(msg ...*accountstypes.MsgSetState) []types.DBSetState {
+	result := make([]types.DBSetState, 0, len(msg))
+	for _, state := range msg {
+		result = append(result, toSetStateDatabase(state))
+	}
+
+	return result
+}
+
+// toSetStateDomain - mapping func to database model
+func toSetStateDomain(msg types.DBSetState) *accountstypes.MsgSetState {
+	return &accountstypes.MsgSetState{
+		Creator: msg.Creator,
+		Hash:    msg.Hash,
+		State:   accountstypes.AccountState(msg.State),
+		Reason:  msg.Reason,
 	}
 }

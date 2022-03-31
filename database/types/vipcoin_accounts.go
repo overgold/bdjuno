@@ -81,6 +81,14 @@ type (
 		Extras          ExtraDB `db:"extras"`
 	}
 
+	// DBSetState represents a single row inside the "vipcoin_chain_accounts_set_state" table
+	DBSetState struct {
+		Creator string `db:"creator"`
+		Hash    string `db:"hash"`
+		State   int32  `db:"state"`
+		Reason  string `db:"reason"`
+	}
+
 	// ExtraDB helprs type
 	ExtraDB struct {
 		Extras []extratypes.Extra
