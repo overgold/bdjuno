@@ -33,14 +33,14 @@ func (m *Module) handleMsgAddAffiliate(tx *juno.Tx, index int, msg *types.MsgAdd
 	account := accountArr[0]
 	affiliate := affiliateArr[0]
 
-	accIsSet := false // The account affiliates record is already set
+	var accIsSet bool // The account affiliates record is already set
 	for _, a := range account.Affiliates {
 		if a.Address == affiliate.Address {
 			accIsSet = true
 		}
 	}
 
-	affIsSet := false // The affiliate account affiliates record is already set
+	var affIsSet bool // The affiliate account affiliates record is already set
 	for _, a := range affiliate.Affiliates {
 		if a.Address == account.Address {
 			affIsSet = true
@@ -48,12 +48,12 @@ func (m *Module) handleMsgAddAffiliate(tx *juno.Tx, index int, msg *types.MsgAdd
 	}
 
 	if !accIsSet {
-		a := &types.Affiliate{
+		newAffiliate := &types.Affiliate{
 			Address:     affiliate.Address,
 			Affiliation: msg.Affiliation,
 			Extras:      msg.Extras,
 		}
-		account.Affiliates = append(account.Affiliates, a)
+		account.Affiliates = append(account.Affiliates, newAffiliate)
 
 		if err := m.accountRepo.UpdateAccounts(account); err != nil {
 			return err
@@ -68,13 +68,13 @@ func (m *Module) handleMsgAddAffiliate(tx *juno.Tx, index int, msg *types.MsgAdd
 		if msg.Affiliation == types.AFFILIATION_KIND_REFERRAL {
 			affiliateRelationType = types.AFFILIATION_KIND_REFERRER
 		}
-		a := &types.Affiliate{
+		newAffiliate := &types.Affiliate{
 			Address:     account.Address,
 			Affiliation: affiliateRelationType,
 			Extras:      msg.Extras,
 		}
 
-		affiliate.Affiliates = append(affiliate.Affiliates, a)
+		affiliate.Affiliates = append(affiliate.Affiliates, newAffiliate)
 		if err := m.accountRepo.UpdateAccounts(account); err != nil {
 			return err
 		}

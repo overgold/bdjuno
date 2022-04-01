@@ -93,7 +93,7 @@ func TestRepository_GetAddAffiliate(t *testing.T) {
 	codec := simapp.MakeTestEncodingConfig()
 
 	type args struct {
-		accfilter filter.Filter
+		accountFilter filter.Filter
 	}
 	tests := []struct {
 		name    string
@@ -104,7 +104,7 @@ func TestRepository_GetAddAffiliate(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				accfilter: filter.NewFilter().SetArgument(types.FieldCreator, "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g"),
+				accountFilter: filter.NewFilter().SetArgument(types.FieldCreator, "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g"),
 			},
 			want: []*accountstypes.MsgAddAffiliate{
 				{
@@ -131,7 +131,7 @@ func TestRepository_GetAddAffiliate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := accountsdb.NewRepository(db, codec.Marshaler)
 
-			got, err := r.GetAddAffiliate(tt.args.accfilter)
+			got, err := r.GetAddAffiliate(tt.args.accountFilter)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Repository.GetAddAffiliate() error = %v, wantErr %v", err, tt.wantErr)
 				return

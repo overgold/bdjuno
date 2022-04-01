@@ -26,8 +26,8 @@ func (r Repository) SaveAddAffiliate(msg ...*accountstypes.MsgAddAffiliate) erro
 }
 
 // GetAddAffiliate - get the given affiliate from database
-func (r Repository) GetAddAffiliate(accfilter filter.Filter) ([]*accountstypes.MsgAddAffiliate, error) {
-	query, args := accfilter.Build(
+func (r Repository) GetAddAffiliate(accountFilter filter.Filter) ([]*accountstypes.MsgAddAffiliate, error) {
+	query, args := accountFilter.Build(
 		tableAddAffiliate,
 		types.FieldCreator, types.FieldAccountHash, types.FieldAffiliationHash,
 		types.FieldAffiliation, types.FieldExtra,
