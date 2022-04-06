@@ -1,7 +1,4 @@
-############### ACTIONS ###############
 actions:
-
-##### Bank #####
 - name: action_account_balance
   definition:
     kind: synchronous
@@ -18,9 +15,7 @@ actions:
       name: Content-Type
   permissions:
   - role: anonymous
-
-##### Staking / Delegatagor #####
-- name: action_delegation_reward
+- name: action_delegation
   definition:
     kind: synchronous
     handler: "{{ACTION_BASE_URL}}/delegation_reward"
@@ -36,8 +31,7 @@ actions:
       name: Content-Type
   permissions:
   - role: anonymous
-
-- name: action_delegator_withdraw_address
+- name: action_delegation_reward
   definition:
     kind: synchronous
     handler: "{{ACTION_BASE_URL}}/delegator_withdraw_address"
@@ -51,8 +45,7 @@ actions:
       name: Content-Type
   permissions:
   - role: anonymous
-
-- name: action_delegation
+- name: action_delegation_total
   definition:
     kind: synchronous
     handler: "{{ACTION_BASE_URL}}/delegation"
@@ -74,8 +67,7 @@ actions:
       name: Content-Type
   permissions:
   - role: anonymous
-
-- name: action_delegation_total
+- name: action_delegator_withdraw_address
   definition:
     kind: synchronous
     handler: "{{ACTION_BASE_URL}}/delegation_total"
@@ -91,7 +83,6 @@ actions:
       name: Content-Type
   permissions:
   - role: anonymous
-
 - name: action_redelegation
   definition:
     kind: synchronous
@@ -114,7 +105,6 @@ actions:
       name: Content-Type
   permissions:
   - role: anonymous
-
 - name: action_unbonding_delegation
   definition:
     kind: synchronous
@@ -137,7 +127,6 @@ actions:
       name: Content-Type
   permissions:
   - role: anonymous
-
 - name: action_unbonding_delegation_total
   definition:
     kind: synchronous
@@ -154,8 +143,6 @@ actions:
       name: Content-Type
   permissions:
   - role: anonymous
-
-##### Staking / Validator #####
 - name: action_validator_commission_amount
   definition:
     kind: synchronous
@@ -170,7 +157,6 @@ actions:
       name: Content-Type
   permissions:
   - role: anonymous
-
 - name: action_validator_delegations
   definition:
     kind: synchronous
@@ -190,8 +176,7 @@ actions:
     - value: application/json
       name: Content-Type
   permissions:
-  - role: anonymous  
-
+  - role: anonymous
 - name: action_validator_redelegations_from
   definition:
     kind: synchronous
@@ -214,7 +199,6 @@ actions:
       name: Content-Type
   permissions:
   - role: anonymous
-
 - name: action_validator_unbonding_delegations
   definition:
     kind: synchronous
@@ -235,9 +219,17 @@ actions:
       name: Content-Type
   permissions:
   - role: anonymous
-
-############### CUSTOM TYPES ###############
 custom_types:
+  enums: []
+  input_objects: []
+  objects:
+  - name: ActionBalance
+  - name: ActionDelegationReward
+  - name: ActionAddress
+  - name: ActionDelegationResponse
+  - name: ActionRedelegationResponse
+  - name: ActionUnbondingDelegationResponse
+  - name: ActionValidatorCommissionAmount
   scalars:
   - name: ActionCoin
   - name: ActionDelegation
@@ -245,47 +237,3 @@ custom_types:
   - name: ActionPagination
   - name: ActionRedelegation
   - name: ActionUnbondingDelegation
-
-  objects:
-  - name: ActionBalance
-    fields:
-    - name: coins
-      type: [ActionCoin]
-
-  - name: ActionDelegationReward
-    fields:
-    - name: coins
-      type: [ActionCoin]
-    - name: validator_address
-      type: String!
-
-  - name: ActionDelegationResponse
-    fields:
-    - name: delegations
-      type: [ActionDelegation]
-    - name: pagination
-      type: ActionPagination
-
-  - name: ActionAddress
-    fields: 
-    - name: address
-      type: String!
-
-  - name: ActionRedelegationResponse
-    fields:
-    - name: redelegations
-      type: [ActionRedelegation]
-    - name: pagination
-      type: ActionPagination
-
-  - name: ActionUnbondingDelegationResponse
-    fields:
-    - name: unbonding_delegations
-      type: [ActionUnbondingDelegation]
-    - name: pagination
-      type: ActionPagination
-  
-  - name: ActionValidatorCommissionAmount
-    fields:
-    - name: coins
-      type: [ActionCoin]
