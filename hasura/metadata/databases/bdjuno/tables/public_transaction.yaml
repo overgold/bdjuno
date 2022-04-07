@@ -1,6 +1,6 @@
 table:
-  name: transaction
   schema: public
+  name: transaction
 object_relationships:
 - name: block
   using:

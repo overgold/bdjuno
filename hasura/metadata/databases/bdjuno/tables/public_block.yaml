@@ -1,10 +1,10 @@
 table:
-  name: block
   schema: public
+  name: block
 object_relationships:
-- name: validator
-  using:
-    foreign_key_constraint_on: proposer_address
+  - name: validator
+    using:
+      foreign_key_constraint_on: proposer_address
 array_relationships:
 - name: pre_commits
   using:
@@ -50,14 +50,14 @@ array_relationships:
         name: proposal_vote
         schema: public
 select_permissions:
-- permission:
-    allow_aggregations: true
-    columns:
-    - num_txs
-    - height
-    - total_gas
-    - hash
-    - proposer_address
-    - timestamp
-    filter: {}
-  role: anonymous
+  - role: anonymous
+    permission:
+      columns:
+        - num_txs
+        - height
+        - total_gas
+        - hash
+        - proposer_address
+        - timestamp
+      filter: {}
+      allow_aggregations: true

@@ -1,6 +1,6 @@
 table:
-  name: validator
   schema: public
+  name: validator
 object_relationships:
 - name: validator_info
   using:
@@ -94,10 +94,10 @@ array_relationships:
         name: proposal_validator_status_snapshot
         schema: public
 select_permissions:
-- permission:
-    allow_aggregations: true
-    columns:
-    - consensus_address
-    - consensus_pubkey
-    filter: {}
-  role: anonymous
+  - role: anonymous
+    permission:
+      columns:
+        - consensus_address
+        - consensus_pubkey
+      filter: {}
+      allow_aggregations: true

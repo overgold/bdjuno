@@ -223,17 +223,17 @@ custom_types:
   enums: []
   input_objects: []
   objects:
-  - name: ActionBalance
-  - name: ActionDelegationReward
-  - name: ActionAddress
-  - name: ActionDelegationResponse
-  - name: ActionRedelegationResponse
-  - name: ActionUnbondingDelegationResponse
-  - name: ActionValidatorCommissionAmount
+    - name: ActionBalance
+    - name: ActionDelegationReward
+    - name: ActionAddress
+    - name: ActionDelegationResponse
+    - name: ActionRedelegationResponse
+    - name: ActionUnbondingDelegationResponse
+    - name: ActionValidatorCommissionAmount
   scalars:
-  - name: ActionCoin
-  - name: ActionDelegation
-  - name: ActionEntry
-  - name: ActionPagination
-  - name: ActionRedelegation
-  - name: ActionUnbondingDelegation
+    - name: ActionCoin
+    - name: ActionDelegation
+    - name: ActionEntry
+    - name: ActionPagination
+    - name: ActionRedelegation
+    - name: ActionUnbondingDelegation
