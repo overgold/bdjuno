@@ -81,6 +81,7 @@ func NewRegistrar(parser messages.MessageAddressesParser) *Registrar {
 func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	cdc := ctx.EncodingConfig.Marshaler
 	db := database.Cast(ctx.Database)
+	storeKey := sdk.NewKVStoreKey(bankingtypes.StoreKey)
 
 	sources, err := types.BuildSources(ctx.JunoConfig.Node, ctx.EncodingConfig)
 	if err != nil {
@@ -100,7 +101,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 
 	vipcoinAccountsModule := accounts.NewModule(sources.VipcoinAccountsSource, cdc, db)
 	vipcoinWalletsModule := wallets.NewModule(r.parser, sources.VipcoinWalletsSource, cdc, db)
-	vipcoinBankingModule := banking.NewModule(sources.VipcoinBankingSource, cdc, db)
+	vipcoinBankingModule := banking.NewModule(sources.VipcoinBankingSource, storeKey, cdc, db)
 	vipcoinAssetsModule := assets.NewModule(sources.VipcoinAssetsSource, cdc, db)
 
 	return []jmodules.Module{
