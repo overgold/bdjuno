@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"time"
 
 	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
@@ -16,7 +17,7 @@ import (
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
-// GetBlock - get block from database
+// GetTransaction - get transaction from database
 func (db *Db) GetTransaction(filter filter.Filter) (*txtypes.Tx, error) {
 	query, args := filter.SetLimit(1).Build("transaction")
 
@@ -61,16 +62,20 @@ func (db *Db) GetTransactions(filter filter.Filter) ([]*txtypes.Tx, error) {
 // toTxTypesTx - convert database row to Tx
 func (db *Db) toTxTypesTx(tx types.TransactionRow) (*txtypes.Tx, error) {
 	var err error
-	result, _ := txtypes.NewTx(
+	result, err := txtypes.NewTx(
 		&sdk.TxResponse{},
 		&cosmostx.Tx{Body: &cosmostx.TxBody{}, AuthInfo: &cosmostx.AuthInfo{}},
 	)
+
+	if err != nil {
+		return nil, err
+	}
 
 	if !tx.Success {
 		result.TxResponse.Code = 1
 	}
 
-	anyRaw := []json.RawMessage{}
+	var anyRaw []json.RawMessage
 	if err = json.Unmarshal(tx.Messages, &anyRaw); err != nil {
 		return nil, err
 	}
@@ -93,7 +98,7 @@ func (db *Db) toTxTypesTx(tx types.TransactionRow) (*txtypes.Tx, error) {
 		}
 	}
 
-	sigInfoRaw := []json.RawMessage{}
+	var sigInfoRaw []json.RawMessage
 	if err = json.Unmarshal(tx.SignerInfos, &sigInfoRaw); err != nil {
 		return nil, err
 	}
@@ -102,7 +107,7 @@ func (db *Db) toTxTypesTx(tx types.TransactionRow) (*txtypes.Tx, error) {
 	for _, sig := range sigInfoRaw {
 		sigInfo := cosmostx.SignerInfo{}
 
-		if err := db.EncodingConfig.Marshaler.UnmarshalJSON(sig, &sigInfo); err != nil {
+		if err = db.EncodingConfig.Marshaler.UnmarshalJSON(sig, &sigInfo); err != nil {
 			return nil, err
 		}
 
@@ -119,12 +124,18 @@ func (db *Db) toTxTypesTx(tx types.TransactionRow) (*txtypes.Tx, error) {
 		return nil, err
 	}
 
+	block, err := db.GetBlock(filter.NewFilter().SetArgument(types.FieldHeight, tx.Height))
+	if err != nil {
+		return nil, err
+	}
+
 	result.TxHash = tx.Hash
 	result.Height = tx.Height
 	result.Body.Memo = tx.Memo
 	result.GasWanted = tx.GasWanted
 	result.GasUsed = tx.GasUsed
 	result.RawLog = tx.RawLog
+	result.Timestamp = block.Timestamp.Format(time.RFC3339)
 
 	return result, nil
 }

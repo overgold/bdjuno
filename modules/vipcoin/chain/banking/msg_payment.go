@@ -17,7 +17,7 @@ import (
 )
 
 // handleMsgPayments allows to properly handle a MsgSetState
-func (m *Module) handleMsgPayments(tx *juno.Tx, index int, msg *banking.MsgPayment) error {
+func (m *Module) handleMsgPayments(tx *juno.Tx, _ int, msg *banking.MsgPayment) error {
 	msg.WalletFrom = strings.ToLower(msg.WalletFrom)
 	msg.WalletTo = strings.ToLower(msg.WalletTo)
 	msg.Asset = strings.ToLower(msg.Asset)
@@ -95,7 +95,7 @@ func (m *Module) payment(
 		return err
 	}
 
-	time, err := time.Parse(time.RFC3339, tx.Timestamp)
+	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
 	if err != nil {
 		return err
 	}
@@ -109,7 +109,7 @@ func (m *Module) payment(
 			Amount:    msg.Amount,
 			Extras:    msg.Extras,
 			Kind:      banking.TRANSFER_KIND_PAYMENT,
-			Timestamp: time.Unix(),
+			Timestamp: timestamp.Unix(),
 			TxHash:    tx.TxHash,
 		},
 	}
@@ -260,7 +260,7 @@ func (m *Module) paymentWithFee(
 		return err
 	}
 
-	time, err := time.Parse(time.RFC3339, tx.Timestamp)
+	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
 	if err != nil {
 		return err
 	}
@@ -273,7 +273,7 @@ func (m *Module) paymentWithFee(
 			Asset:     msg.Asset,
 			Amount:    feeSysReward,
 			Kind:      banking.TRANSFER_KIND_SYSTEM_REWARD,
-			Timestamp: time.Unix(),
+			Timestamp: timestamp.Unix(),
 			TxHash:    tx.TxHash,
 		},
 	}
@@ -296,7 +296,7 @@ func (m *Module) paymentWithFee(
 			Asset:     msg.Asset,
 			Amount:    feeRefReward,
 			Kind:      banking.TRANSFER_KIND_SYSTEM_REF_REWARD,
-			Timestamp: time.Unix(),
+			Timestamp: timestamp.Unix(),
 			TxHash:    tx.TxHash,
 		},
 	}
@@ -326,7 +326,7 @@ func (m *Module) paymentWithFee(
 			Amount:    msg.Amount,
 			Extras:    msg.Extras,
 			Kind:      banking.TRANSFER_KIND_PAYMENT,
-			Timestamp: time.Unix(),
+			Timestamp: timestamp.Unix(),
 			TxHash:    tx.TxHash,
 		},
 	}

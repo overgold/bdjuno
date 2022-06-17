@@ -3,23 +3,36 @@ package vipcoin
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/juno/v2/modules"
 	"github.com/forbole/juno/v2/types"
+	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 )
 
 // HandleMsg implements MessageModule
-func (m *module) HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error {
+func (m *module) HandleMsg(_ int, _ sdk.Msg, _ *types.Tx) error {
+	return nil
+}
+
+// HandleBlock implements MessageModule
+func (m *module) HandleBlock(
+	_ *tmctypes.ResultBlock,
+	_ *tmctypes.ResultBlockResults,
+	_ []*types.Tx,
+	_ *tmctypes.ResultValidators,
+) error {
 	m.mutex.RLock()
 	if m.schedulerRun {
 		m.mutex.RUnlock()
 		return nil
 	}
+
 	m.mutex.RUnlock()
 
 	m.mutex.Lock()
@@ -37,16 +50,14 @@ func (m *module) parseBlock() {
 		m.mutex.Unlock()
 	}()
 
-	last_block, err := m.lastBlockRepo.Get()
+	lastBlock, err := m.lastBlockRepo.Get()
 	if err != nil {
 		m.logger.Error("Fail lastBlockRepo.Get", "module", "vipcoin", "error", err)
 		return
 	}
 
 	for {
-		last_block += 1
-
-		block, err := m.db.GetBlock(filter.NewFilter().SetArgument(dbtypes.FieldHeight, last_block))
+		block, err := m.db.GetBlock(filter.NewFilter().SetArgument(dbtypes.FieldHeight, lastBlock+1))
 		if err != nil {
 			if errors.As(err, &errs.NotFound{}) {
 				return
@@ -56,32 +67,49 @@ func (m *module) parseBlock() {
 			return
 		}
 
-		m.logger.Debug("parse block", "height", block.Height)
+		if block.TxNum == 0 {
+			lastBlock += 1
+
+			if err = m.lastBlockRepo.Update(lastBlock); err != nil {
+				m.logger.Error("Fail lastBlockRepo.Update", "module", "vipcoin", "error", err)
+				return
+			}
+
+			continue
+		}
 
 		txs, err := m.db.GetTransactions(
 			filter.NewFilter().
 				SetCondition(filter.ConditionAND).
-				SetArgument(dbtypes.FieldHeight, block.Height).
-				SetArgument(dbtypes.FieldSuccess, true))
+				SetArgument(dbtypes.FieldHeight, block.Height),
+		)
 		if err != nil {
 			if !errors.As(err, &errs.NotFound{}) {
 				m.logger.Error("Fail GetTransactions", "module", "vipcoin", "error", err)
-			}
-
-			if err := m.lastBlockRepo.Update(last_block); err != nil {
-				m.logger.Error("Fail lastBlockRepo.Update", "module", "vipcoin", "error", err)
 				return
 			}
+
+			time.Sleep(time.Second)
+			continue
+		}
+
+		m.logger.Debug("parse block", "height", block.Height)
+
+		if block.TxNum != int64(len(txs)) {
+			m.logger.Error("Fail lastBlockRepo.Update", "module", "vipcoin", "error", err)
+			time.Sleep(time.Second)
 			continue
 		}
 
 		for _, tx := range txs {
-			if err := m.parseMessages(tx); err != nil {
+			if err = m.parseMessages(tx); err != nil {
 				m.logger.Error("Fail parseMessages", "module", "vipcoin", "error", err)
 			}
 		}
 
-		if err := m.lastBlockRepo.Update(last_block); err != nil {
+		lastBlock += 1
+
+		if err = m.lastBlockRepo.Update(lastBlock); err != nil {
 			m.logger.Error("Fail lastBlockRepo.Update", "module", "vipcoin", "error", err)
 			return
 		}

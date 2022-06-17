@@ -50,7 +50,7 @@ func (m *Module) handleMsgSystemTransfer(tx *juno.Tx, index int, msg *types.MsgS
 		return err
 	}
 
-	time, err := time.Parse(time.RFC3339, tx.Timestamp)
+	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
 	if err != nil {
 		return err
 	}
@@ -59,11 +59,12 @@ func (m *Module) handleMsgSystemTransfer(tx *juno.Tx, index int, msg *types.MsgS
 		WalletFrom: msg.WalletFrom,
 		WalletTo:   msg.WalletTo,
 		BaseTransfer: types.BaseTransfer{
+			Id:        1,
 			Asset:     msg.Asset,
 			Amount:    msg.Amount,
 			Kind:      types.TRANSFER_KIND_SYSTEM,
 			Extras:    msg.Extras,
-			Timestamp: time.Unix(),
+			Timestamp: timestamp.Unix(),
 			TxHash:    tx.TxHash,
 		},
 	}
