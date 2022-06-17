@@ -1,8 +1,9 @@
 package banking
 
 import (
+	"regexp"
+
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/juno/v2/modules"
 
 	"github.com/forbole/bdjuno/v2/database"
@@ -28,12 +29,12 @@ type Module struct {
 	assetRepo    assets.Repository
 	accountsRepo accounts.Repository
 	keeper       source.Source
-	storeKey     sdk.StoreKey
+
+	numberOnly *regexp.Regexp
 }
 
 // NewModule returns a new Module instance
-func NewModule(
-	keeper source.Source, storeKey sdk.StoreKey, cdc codec.Marshaler, db *database.Db) *Module {
+func NewModule(keeper source.Source, cdc codec.Marshaler, db *database.Db) *Module {
 	return &Module{
 		cdc:          cdc,
 		db:           db,
@@ -42,7 +43,8 @@ func NewModule(
 		assetRepo:    *assets.NewRepository(db.Sqlx, cdc),
 		accountsRepo: *accounts.NewRepository(db.Sqlx, cdc),
 		keeper:       keeper,
-		storeKey:     storeKey,
+
+		numberOnly: regexp.MustCompile(`[-]?\d[\d,]*[\.]?[\d{2}]*`),
 	}
 }
 

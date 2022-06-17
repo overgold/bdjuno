@@ -23,6 +23,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error {
 		return m.handleMsgSetExtra(walletMsg)
 	case *typeswallets.MsgCreateWalletWithBalance:
 		return m.MsgCreateWalletWithBalance(walletMsg)
+	case *typeswallets.MsgSetWalletKind:
+		return m.handleMsgSetKind(walletMsg)
 	default:
 		return nil
 	}
