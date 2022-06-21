@@ -102,6 +102,10 @@ func (m *module) parseBlock() {
 		}
 
 		for _, tx := range txs {
+			if !tx.Successful() {
+				continue
+			}
+
 			if err = m.parseMessages(tx); err != nil {
 				m.logger.Error("Fail parseMessages", "module", "vipcoin", "error", err)
 			}

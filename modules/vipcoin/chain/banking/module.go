@@ -1,8 +1,6 @@
 package banking
 
 import (
-	"regexp"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/forbole/juno/v2/modules"
 
@@ -29,8 +27,6 @@ type Module struct {
 	assetRepo    assets.Repository
 	accountsRepo accounts.Repository
 	keeper       source.Source
-
-	numberOnly *regexp.Regexp
 }
 
 // NewModule returns a new Module instance
@@ -43,8 +39,6 @@ func NewModule(keeper source.Source, cdc codec.Marshaler, db *database.Db) *Modu
 		assetRepo:    *assets.NewRepository(db.Sqlx, cdc),
 		accountsRepo: *accounts.NewRepository(db.Sqlx, cdc),
 		keeper:       keeper,
-
-		numberOnly: regexp.MustCompile(`[-]?\d[\d,]*[\.]?[\d{2}]*`),
 	}
 }
 
