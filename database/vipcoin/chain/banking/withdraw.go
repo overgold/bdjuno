@@ -24,10 +24,9 @@ func (r Repository) SaveWithdraws(withdraws ...*bankingtypes.Withdraw) error {
 	defer tx.Rollback()
 
 	queryBaseTransfer := `INSERT INTO vipcoin_chain_banking_base_transfers 
-       ("asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
+       ("id", "asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
      VALUES 
-       (:asset, :amount, :kind, :extras, :timestamp, :tx_hash)
-     RETURNING id`
+       (:id, :asset, :amount, :kind, :extras, :timestamp, :tx_hash)`
 
 	queryWithdraw := `INSERT INTO vipcoin_chain_banking_withdraw
 			("id", "wallet")
@@ -37,18 +36,7 @@ func (r Repository) SaveWithdraws(withdraws ...*bankingtypes.Withdraw) error {
 	for _, withdraw := range withdraws {
 		withdrawDB := toWithdrawDatabase(withdraw)
 
-		resp, err := tx.NamedQuery(queryBaseTransfer, withdrawDB)
-		if err != nil {
-			return err
-		}
-
-		for resp.Next() {
-			if err := resp.Scan(&withdrawDB.ID); err != nil {
-				return err
-			}
-		}
-
-		if err := resp.Err(); err != nil {
+		if _, err := tx.NamedExec(queryBaseTransfer, withdrawDB); err != nil {
 			return err
 		}
 

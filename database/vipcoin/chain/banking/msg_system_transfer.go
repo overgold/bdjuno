@@ -8,17 +8,13 @@ import (
 )
 
 // SaveSystemTransfers - method that create system transfers to the "vipcoin_chain_banking_msg_system_transfer" table
-func (r Repository) SaveMsgSystemTransfers(transfers ...*bankingtypes.MsgSystemTransfer) error {
-	if len(transfers) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveMsgSystemTransfers(transfers *bankingtypes.MsgSystemTransfer, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_banking_msg_system_transfer 
-		(creator, wallet_from, wallet_to, asset, amount, extras) 
+		(transaction_hash, creator, wallet_from, wallet_to, asset, amount, extras) 
 		VALUES 
-		(:creator, :wallet_from, :wallet_to, :asset, :amount, :extras)`
+		(:transaction_hash, :creator, :wallet_from, :wallet_to, :asset, :amount, :extras)`
 
-	if _, err := r.db.NamedExec(query, toMsgSystemTransfersDatabase(transfers...)); err != nil {
+	if _, err := r.db.NamedExec(query, toMsgSystemTransferDatabase(transfers, transactionHash)); err != nil {
 		return err
 	}
 

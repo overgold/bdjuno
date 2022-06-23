@@ -24,10 +24,9 @@ func (r Repository) SaveIssues(issues ...*bankingtypes.Issue) error {
 	defer tx.Rollback()
 
 	queryBaseTransfer := `INSERT INTO vipcoin_chain_banking_base_transfers 
-       ("asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
+       ("id", "asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
      VALUES 
-       (:asset, :amount, :kind, :extras, :timestamp, :tx_hash)
-     RETURNING id`
+       (:id, :asset, :amount, :kind, :extras, :timestamp, :tx_hash)`
 
 	queryIssue := `INSERT INTO vipcoin_chain_banking_issue
 			("id", "wallet")
@@ -37,18 +36,7 @@ func (r Repository) SaveIssues(issues ...*bankingtypes.Issue) error {
 	for _, issue := range issues {
 		issueDB := toIssueDatabase(issue)
 
-		resp, err := tx.NamedQuery(queryBaseTransfer, issueDB)
-		if err != nil {
-			return err
-		}
-
-		for resp.Next() {
-			if err := resp.Scan(&issueDB.ID); err != nil {
-				return err
-			}
-		}
-
-		if err := resp.Err(); err != nil {
+		if _, err := tx.NamedExec(queryBaseTransfer, issueDB); err != nil {
 			return err
 		}
 

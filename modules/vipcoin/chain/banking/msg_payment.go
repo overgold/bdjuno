@@ -20,7 +20,7 @@ func (m *Module) handleMsgPayments(tx *juno.Tx, _ int, msg *banking.MsgPayment) 
 	msg.WalletTo = strings.ToLower(msg.WalletTo)
 	msg.Asset = strings.ToLower(msg.Asset)
 
-	if err := m.bankingRepo.SaveMsgPayments(msg); err != nil {
+	if err := m.bankingRepo.SaveMsgPayments(msg, tx.TxHash); err != nil {
 		return err
 	}
 
@@ -90,12 +90,7 @@ func (m *Module) paymentWithFee(
 	asset assets.Asset,
 	walletFrom, walletTo wallets.Wallet,
 ) error {
-	systemReward, err := getSystemTransferByKind(tx, payment.WalletTo, banking.TRANSFER_KIND_SYSTEM_REWARD)
-	if err != nil {
-		return err
-	}
-
-	systemRefReward, err := getSystemTransferByKind(tx, payment.WalletTo, banking.TRANSFER_KIND_SYSTEM_REF_REWARD)
+	systemReward, systemRefReward, err := m.getSystemTransfers(tx, payment.WalletTo)
 	if err != nil {
 		return err
 	}
@@ -106,7 +101,7 @@ func (m *Module) paymentWithFee(
 	case err != nil:
 		return err
 	case len(walletsSystemReward) != 1:
-		return wallets.ErrInvalidKindField
+		return wallets.ErrInvalidAddressField
 	}
 
 	walletsRefReward, err := m.walletsRepo.GetWallets(filter.NewFilter().SetArgument(dbtypes.FieldAddress, systemRefReward.WalletTo))
@@ -114,7 +109,7 @@ func (m *Module) paymentWithFee(
 	case err != nil:
 		return err
 	case len(walletsRefReward) != 1:
-		return wallets.ErrInvalidKindField
+		return wallets.ErrInvalidAddressField
 	}
 
 	walletsVoid, err := m.walletsRepo.GetWallets(

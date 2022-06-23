@@ -1,5 +1,5 @@
 table:
-  name: vipcoin_chain_accounts_set_state
+  name: vipcoin_chain_accounts_account_migrate
   schema: public
 object_relationships:
   - name: transaction

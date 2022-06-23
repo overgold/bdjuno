@@ -8,17 +8,13 @@ import (
 )
 
 // SaveExtra - saves the given extra inside the database
-func (r Repository) SaveExtra(msg ...*accountstypes.MsgSetExtra) error {
-	if len(msg) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveExtra(msg *accountstypes.MsgSetExtra, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_accounts_set_extra 
-			(creator, hash, extras) 
+			(transaction_hash, creator, hash, extras) 
 		VALUES 
-			(:creator, :hash, :extras)`
+			(:transaction_hash, :creator, :hash, :extras)`
 
-	if _, err := r.db.NamedExec(query, toSetExtrasDatabase(msg...)); err != nil {
+	if _, err := r.db.NamedExec(query, toSetExtraDatabase(msg, transactionHash)); err != nil {
 		return err
 	}
 

@@ -8,17 +8,13 @@ import (
 )
 
 // SaveMsgSetRewardMgrAddress - method that save to the "vipcoin_chain_banking_set_reward_manager_address" table
-func (r Repository) SaveMsgSetRewardMgrAddress(addresses ...*bankingtypes.MsgSetRewardManagerAddress) error {
-	if len(addresses) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveMsgSetRewardMgrAddress(addresses *bankingtypes.MsgSetRewardManagerAddress, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_banking_set_reward_manager_address 
-		(creator, address) 
+		(transaction_hash, creator, address) 
 		VALUES 
-		(:creator, :address)`
+		(:transaction_hash, :creator, :address)`
 
-	if _, err := r.db.NamedExec(query, toMsgSetRewardMgrAddressesDB(addresses...)); err != nil {
+	if _, err := r.db.NamedExec(query, toMsgSetRewardMgrAddressDB(addresses, transactionHash)); err != nil {
 		return err
 	}
 

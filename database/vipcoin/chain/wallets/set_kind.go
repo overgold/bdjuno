@@ -8,17 +8,13 @@ import (
 )
 
 // SaveKinds - inserts into the "vipcoin_chain_wallets_set_wallet_kind" table
-func (r Repository) SaveKinds(messages ...*walletstypes.MsgSetWalletKind) error {
-	if len(messages) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveKinds(messages *walletstypes.MsgSetWalletKind, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_wallets_set_wallet_kind 
-			(creator, address, kind) 
+			(transaction_hash, creator, address, kind) 
 			VALUES 
-			(:creator, :address, :kind)`
+			(:transaction_hash, :creator, :address, :kind)`
 
-	if _, err := r.db.NamedExec(query, toSetKindsDatabase(messages...)); err != nil {
+	if _, err := r.db.NamedExec(query, toSetKindDatabase(messages, transactionHash)); err != nil {
 		return err
 	}
 

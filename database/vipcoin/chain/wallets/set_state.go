@@ -11,32 +11,17 @@ import (
 )
 
 // SaveStates - inserts into the "vipcoin_chain_wallets_set_wallet_state" table
-func (r Repository) SaveStates(messages ...*walletstypes.MsgSetWalletState) error {
-	if len(messages) == 0 {
-		return nil
-	}
+func (r Repository) SaveStates(messages *walletstypes.MsgSetWalletState, transactionHash string) error {
+	query := `INSERT INTO vipcoin_chain_wallets_set_wallet_state 
+			(transaction_hash, creator, address, state) 
+			VALUES 
+			(:transaction_hash, :creator, :address, :state)`
 
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
+	if _, err := r.db.NamedExec(query, toSetWalletStateDatabase(messages, transactionHash)); err != nil {
 		return err
 	}
 
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
-	query := `INSERT INTO vipcoin_chain_wallets_set_wallet_state 
-			(creator, address, state) 
-			VALUES 
-			(:creator, :address, :state)`
-
-	for _, m := range messages {
-		if _, err := tx.NamedExec(query, toSetWalletStateDatabase(m)); err != nil {
-			return err
-		}
-	}
-
-	return tx.Commit()
+	return nil
 }
 
 // GetStates - get states from the "vipcoin_chain_wallets_set_wallet_state" table
@@ -75,7 +60,7 @@ func (r Repository) UpdateStates(messages ...*walletstypes.MsgSetWalletState) er
 				 WHERE address = :address`
 
 	for _, m := range messages {
-		stateDB := toSetWalletStateDatabase(m)
+		stateDB := toSetWalletStateDatabase(m, "")
 		if err != nil {
 			return err
 		}

@@ -8,17 +8,13 @@ import (
 )
 
 // SaveMsgIssue - method that create issue to the "vipcoin_chain_banking_msg_issue" table
-func (r Repository) SaveMsgIssue(issue ...*bankingtypes.MsgIssue) error {
-	if len(issue) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveMsgIssue(issue *bankingtypes.MsgIssue, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_banking_msg_issue 
-		(creator, wallet, asset, amount, extras) 
+		(transaction_hash, creator, wallet, asset, amount, extras) 
 		VALUES 
-		(:creator, :wallet, :asset, :amount, :extras)`
+		(:transaction_hash, :creator, :wallet, :asset, :amount, :extras)`
 
-	if _, err := r.db.NamedExec(query, toMsgIssuesDatabase(issue...)); err != nil {
+	if _, err := r.db.NamedExec(query, toMsgIssueDatabase(issue, transactionHash)); err != nil {
 		return err
 	}
 

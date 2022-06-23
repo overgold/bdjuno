@@ -8,17 +8,13 @@ import (
 )
 
 // SaveState - saves the given state inside the database
-func (r Repository) SaveState(msg ...*accountstypes.MsgSetState) error {
-	if len(msg) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveState(msg *accountstypes.MsgSetState, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_accounts_set_state 
-			(creator, hash, state, reason) 
+			(transaction_hash, creator, hash, state, reason) 
 			VALUES 
-			(:creator, :hash, :state, :reason)`
+			(:transaction_hash, :creator, :hash, :state, :reason)`
 
-	if _, err := r.db.NamedExec(query, toSetStatesDatabase(msg...)); err != nil {
+	if _, err := r.db.NamedExec(query, toSetStateDatabase(msg, transactionHash)); err != nil {
 		return err
 	}
 

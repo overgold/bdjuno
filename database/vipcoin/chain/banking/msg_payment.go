@@ -8,17 +8,13 @@ import (
 )
 
 // SaveMsgPayments - method that create payments to the "vipcoin_chain_banking_msg_payment" table
-func (r Repository) SaveMsgPayments(payments ...*bankingtypes.MsgPayment) error {
-	if len(payments) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveMsgPayments(payments *bankingtypes.MsgPayment, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_banking_msg_payment 
-		(creator, wallet_from, wallet_to, asset, amount, extras) 
+		(transaction_hash, creator, wallet_from, wallet_to, asset, amount, extras) 
 		VALUES 
-		(:creator, :wallet_from, :wallet_to, :asset, :amount, :extras)`
+		(:transaction_hash, :creator, :wallet_from, :wallet_to, :asset, :amount, :extras)`
 
-	if _, err := r.db.NamedExec(query, toMsgPaymentsDatabase(payments...)); err != nil {
+	if _, err := r.db.NamedExec(query, toMsgPaymentDatabase(payments, transactionHash)); err != nil {
 		return err
 	}
 

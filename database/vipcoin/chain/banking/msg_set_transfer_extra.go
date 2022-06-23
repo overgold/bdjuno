@@ -8,17 +8,13 @@ import (
 )
 
 // SaveMsgSetTransferExtra - method that create extras to the "vipcoin_chain_banking_set_transfer_extra" table
-func (r Repository) SaveMsgSetTransferExtra(extras ...*bankingtypes.MsgSetTransferExtra) error {
-	if len(extras) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveMsgSetTransferExtra(extras *bankingtypes.MsgSetTransferExtra, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_banking_set_transfer_extra 
-		(creator, id, extras) 
+		(transaction_hash, creator, id, extras) 
 		VALUES 
-		(:creator, :id, :extras)`
+		(:transaction_hash, :creator, :id, :extras)`
 
-	if _, err := r.db.NamedExec(query, toMsgSetTransferExtrasDatabase(extras...)); err != nil {
+	if _, err := r.db.NamedExec(query, toMsgSetTransferExtraDatabase(extras, transactionHash)); err != nil {
 		return err
 	}
 

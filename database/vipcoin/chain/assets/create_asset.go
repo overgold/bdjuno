@@ -8,17 +8,13 @@ import (
 )
 
 // SaveCreateAsset saves the given asset inside the database
-func (r *Repository) SaveCreateAsset(msg ...*assetstypes.MsgAssetCreate) error {
-	if len(msg) == 0 {
-		return nil
-	}
-
+func (r *Repository) SaveCreateAsset(msg *assetstypes.MsgAssetCreate, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_assets_create 
-			(creator, name, issuer, policies, state, precision, fee_percent, extras) 
+			(transaction_hash, creator, name, issuer, policies, state, precision, fee_percent, extras) 
 		VALUES 
-			(:creator, :name, :issuer, :policies, :state, :precision, :fee_percent, :extras)`
+			(:transaction_hash, :creator, :name, :issuer, :policies, :state, :precision, :fee_percent, :extras)`
 
-	if _, err := r.db.NamedExec(query, toCreateAssetsArrDatabase(msg...)); err != nil {
+	if _, err := r.db.NamedExec(query, toCreateAssetDatabase(msg, transactionHash)); err != nil {
 		return err
 	}
 

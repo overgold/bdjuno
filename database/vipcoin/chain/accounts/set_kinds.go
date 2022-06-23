@@ -8,17 +8,13 @@ import (
 )
 
 // SaveKinds - saves the given kinds inside the database
-func (r Repository) SaveKinds(msg ...*accountstypes.MsgSetKinds) error {
-	if len(msg) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveKinds(msg *accountstypes.MsgSetKinds, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_accounts_set_kinds 
-			(creator, hash, kinds) 
+			(transaction_hash, creator, hash, kinds) 
 			VALUES 
-			(:creator, :hash, :kinds)`
+			(:transaction_hash, :creator, :hash, :kinds)`
 
-	if _, err := r.db.NamedExec(query, toKindsArrDatabase(msg...)); err != nil {
+	if _, err := r.db.NamedExec(query, toSetKindsDatabase(msg, transactionHash)); err != nil {
 		return err
 	}
 

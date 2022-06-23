@@ -24,10 +24,9 @@ func (r Repository) SaveSystemTransfers(transfers ...*bankingtypes.SystemTransfe
 	defer tx.Rollback()
 
 	queryBaseTransfer := `INSERT INTO vipcoin_chain_banking_base_transfers 
-       ("asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
+       ("id", "asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
      VALUES 
-       (:asset, :amount, :kind, :extras, :timestamp, :tx_hash)
-     RETURNING id`
+       (:id, :asset, :amount, :kind, :extras, :timestamp, :tx_hash)`
 
 	querySystemTransfer := `INSERT INTO vipcoin_chain_banking_system_transfer
 			("id", "wallet_from", "wallet_to")
@@ -37,18 +36,7 @@ func (r Repository) SaveSystemTransfers(transfers ...*bankingtypes.SystemTransfe
 	for _, transfer := range transfers {
 		transferDB := toSystemTransferDatabase(transfer)
 
-		resp, err := tx.NamedQuery(queryBaseTransfer, transferDB)
-		if err != nil {
-			return err
-		}
-
-		for resp.Next() {
-			if err := resp.Scan(&transferDB.ID); err != nil {
-				return err
-			}
-		}
-
-		if err := resp.Err(); err != nil {
+		if _, err := tx.NamedExec(queryBaseTransfer, transferDB); err != nil {
 			return err
 		}
 

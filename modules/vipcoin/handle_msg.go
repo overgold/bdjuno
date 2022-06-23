@@ -3,6 +3,7 @@ package vipcoin
 import (
 	"errors"
 	"fmt"
+	"os"
 	"time"
 
 	"git.ooo.ua/vipcoin/lib/errs"
@@ -10,114 +11,90 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/juno/v2/modules"
 	"github.com/forbole/juno/v2/types"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 )
 
-// HandleMsg implements MessageModule
-func (m *module) HandleMsg(_ int, _ sdk.Msg, _ *types.Tx) error {
-	return nil
-}
-
-// HandleBlock implements MessageModule
-func (m *module) HandleBlock(
-	_ *tmctypes.ResultBlock,
-	_ *tmctypes.ResultBlockResults,
-	_ []*types.Tx,
-	_ *tmctypes.ResultValidators,
-) error {
-	m.mutex.RLock()
-	if m.schedulerRun {
-		m.mutex.RUnlock()
-		return nil
-	}
-
-	m.mutex.RUnlock()
-
-	m.mutex.Lock()
-	m.schedulerRun = true
-	go m.parseBlock()
-	m.mutex.Unlock()
-
-	return nil
-}
-
-func (m *module) parseBlock() {
-	defer func() {
-		m.mutex.Lock()
-		m.schedulerRun = false
-		m.mutex.Unlock()
-	}()
-
-	lastBlock, err := m.lastBlockRepo.Get()
-	if err != nil {
-		m.logger.Error("Fail lastBlockRepo.Get", "module", "vipcoin", "error", err)
-		return
-	}
-
+func (m *module) scheduler() {
 	for {
-		block, err := m.db.GetBlock(filter.NewFilter().SetArgument(dbtypes.FieldHeight, lastBlock+1))
+		lastBlock, err := m.lastBlockRepo.Get()
 		if err != nil {
+			m.logger.Error("Fail lastBlockRepo.Get", "module", "vipcoin", "error", err)
+			continue
+		}
+
+		lastBlock++
+
+		if err := m.parseBlock(lastBlock); err != nil {
+			time.Sleep(time.Second)
+
 			if errors.As(err, &errs.NotFound{}) {
-				return
-			}
-
-			m.logger.Error("Fail GetBlock", "module", "vipcoin", "error", err)
-			return
-		}
-
-		if block.TxNum == 0 {
-			lastBlock += 1
-
-			if err = m.lastBlockRepo.Update(lastBlock); err != nil {
-				m.logger.Error("Fail lastBlockRepo.Update", "module", "vipcoin", "error", err)
-				return
-			}
-
-			continue
-		}
-
-		txs, err := m.db.GetTransactions(
-			filter.NewFilter().
-				SetCondition(filter.ConditionAND).
-				SetArgument(dbtypes.FieldHeight, block.Height),
-		)
-		if err != nil {
-			if !errors.As(err, &errs.NotFound{}) {
-				m.logger.Error("Fail GetTransactions", "module", "vipcoin", "error", err)
-				return
-			}
-
-			time.Sleep(time.Second)
-			continue
-		}
-
-		m.logger.Debug("parse block", "height", block.Height)
-
-		if block.TxNum != int64(len(txs)) {
-			m.logger.Error("Fail lastBlockRepo.Update", "module", "vipcoin", "error", err)
-			time.Sleep(time.Second)
-			continue
-		}
-
-		for _, tx := range txs {
-			if !tx.Successful() {
 				continue
 			}
 
-			if err = m.parseMessages(tx); err != nil {
-				m.logger.Error("Fail parseMessages", "module", "vipcoin", "error", err)
-			}
+			m.logger.Error("Fail parseBlock", "module", "vipcoin", "error", err)
+			continue
 		}
-
-		lastBlock += 1
 
 		if err = m.lastBlockRepo.Update(lastBlock); err != nil {
 			m.logger.Error("Fail lastBlockRepo.Update", "module", "vipcoin", "error", err)
-			return
+			os.Exit(1)
 		}
 	}
+}
+
+func (m *module) parseBlock(lastBlock uint64) error {
+	block, err := m.db.GetBlock(filter.NewFilter().SetArgument(dbtypes.FieldHeight, lastBlock))
+	if err != nil {
+		if errors.As(err, &errs.NotFound{}) {
+			return err
+		}
+
+		return errs.Internal{Cause: err.Error()}
+	}
+
+	m.logger.Debug("parse block", "height", block.Height)
+
+	if block.TxNum == 0 {
+		return nil
+	}
+
+	return m.parseTx(block)
+}
+
+func (m *module) parseTx(block dbtypes.BlockRow) error {
+	txs, err := m.db.GetTransactions(
+		filter.NewFilter().
+			SetCondition(filter.ConditionAND).
+			SetArgument(dbtypes.FieldHeight, block.Height),
+	)
+	if err != nil {
+		if errors.As(err, &errs.NotFound{}) {
+			return err
+		}
+
+		return errs.Internal{Cause: err.Error()}
+	}
+
+	if block.TxNum != int64(len(txs)) {
+		return &errs.Conflict{
+			Cause: fmt.Errorf("mismatch txs in block: height - %d, expected tx num - %d, exist - %d ",
+				block.Height,
+				block.TxNum,
+				int64(len(txs))).Error()}
+	}
+
+	for _, tx := range txs {
+		if !tx.Successful() {
+			continue
+		}
+
+		if err = m.parseMessages(tx); err != nil {
+			return errs.Internal{Cause: err.Error()}
+		}
+	}
+
+	return nil
 }
 
 // parseMessages - parse messages from transaction

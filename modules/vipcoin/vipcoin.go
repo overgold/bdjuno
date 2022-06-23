@@ -23,7 +23,6 @@ import (
 var (
 	_ modules.Module        = &module{}
 	_ modules.GenesisModule = &module{}
-	_ modules.MessageModule = &module{}
 )
 
 type vipcoinModule interface {
@@ -53,7 +52,7 @@ func NewModule(
 	VipcoinBankingSource vipcoinbankingsource.Source,
 	VipcoinAssetsSource vipcoinassetssource.Source,
 ) *module {
-	return &module{
+	module := &module{
 		cdc:           cdc,
 		db:            db,
 		lastBlockRepo: *last_block.NewRepository(db.Sqlx),
@@ -65,6 +64,10 @@ func NewModule(
 			wallets.NewModule(VipcoinWalletsSource, cdc, db),
 		},
 	}
+
+	go module.scheduler()
+
+	return module
 }
 
 // Name implements modules.Module

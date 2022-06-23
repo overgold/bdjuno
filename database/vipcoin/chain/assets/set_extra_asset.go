@@ -8,17 +8,13 @@ import (
 )
 
 // SaveExtraAsset - saves the given extra inside the database
-func (r Repository) SaveExtraAsset(msg ...*assetstypes.MsgAssetSetExtra) error {
-	if len(msg) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveExtraAsset(msg *assetstypes.MsgAssetSetExtra, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_assets_set_extra 
-			(creator, name, extras) 
+			(transaction_hash, creator, name, extras) 
 		VALUES 
-			(:creator, :name, :extras)`
+			(:transaction_hash, :creator, :name, :extras)`
 
-	if _, err := r.db.NamedExec(query, toSetExtrasDatabase(msg...)); err != nil {
+	if _, err := r.db.NamedExec(query, toSetExtraDatabase(msg, transactionHash)); err != nil {
 		return err
 	}
 

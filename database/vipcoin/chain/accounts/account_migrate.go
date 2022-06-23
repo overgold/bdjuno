@@ -8,17 +8,13 @@ import (
 )
 
 // SaveAccountMigrate - saves the given account migrate inside the database
-func (r Repository) SaveAccountMigrate(msg ...*accountstypes.MsgAccountMigrate) error {
-	if len(msg) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveAccountMigrate(msg *accountstypes.MsgAccountMigrate, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_accounts_account_migrate 
-			(creator, address, hash, public_key) 
+			(transaction_hash, creator, address, hash, public_key) 
 		VALUES 
-			(:creator, :address, :hash, :public_key)`
+			(:transaction_hash, :creator, :address, :hash, :public_key)`
 
-	if _, err := r.db.NamedExec(query, toAccountsMigrateDatabase(msg...)); err != nil {
+	if _, err := r.db.NamedExec(query, toAccountMigrateDatabase(msg, transactionHash)); err != nil {
 		return err
 	}
 

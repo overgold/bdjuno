@@ -8,17 +8,13 @@ import (
 )
 
 // SaveExtras - inserts into the "vipcoin_chain_wallets_set_extra" table
-func (r Repository) SaveExtras(messages ...*walletstypes.MsgSetExtra) error {
-	if len(messages) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveExtras(messages *walletstypes.MsgSetExtra, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_wallets_set_extra 
-			(creator, address, extras) 
+			(transaction_hash, creator, address, extras) 
 			VALUES 
-			(:creator, :address, :extras)`
+			(:transaction_hash, :creator, :address, :extras)`
 
-	if _, err := r.db.NamedExec(query, toSetExtrasDatabase(messages...)); err != nil {
+	if _, err := r.db.NamedExec(query, toSetExtraDatabase(messages, transactionHash)); err != nil {
 		return err
 	}
 

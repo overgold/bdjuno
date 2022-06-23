@@ -8,17 +8,13 @@ import (
 )
 
 // SaveMsgWithdraw - method that create withdraw to the "vipcoin_chain_banking_msg_withdraw" table
-func (r Repository) SaveMsgWithdraw(withdraws ...*bankingtypes.MsgWithdraw) error {
-	if len(withdraws) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveMsgWithdraw(withdraws *bankingtypes.MsgWithdraw, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_banking_msg_withdraw 
-		(creator, wallet, asset, amount, extras) 
+		(transaction_hash, creator, wallet, asset, amount, extras) 
 		VALUES 
-		(:creator, :wallet, :asset, :amount, :extras)`
+		(:transaction_hash, :creator, :wallet, :asset, :amount, :extras)`
 
-	if _, err := r.db.NamedExec(query, toMsgWithdrawsDatabase(withdraws...)); err != nil {
+	if _, err := r.db.NamedExec(query, toMsgWithdrawDatabase(withdraws, transactionHash)); err != nil {
 		return err
 	}
 

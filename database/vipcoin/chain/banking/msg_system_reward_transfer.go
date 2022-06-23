@@ -7,25 +7,21 @@ import (
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
-// SaveMsgSystemRewardTransfers - method that create transfers to the "vipcoin_chain_banking_system_reward_transfer"
-func (r Repository) SaveMsgSystemRewardTransfers(transfers ...*bankingtypes.MsgSystemRewardTransfer) error {
-	if len(transfers) == 0 {
-		return nil
-	}
-
-	query := `INSERT INTO vipcoin_chain_banking_system_reward_transfer 
-		(creator, wallet_from, wallet_to, asset, amount, extras) 
+// SaveMsgSystemRewardTransfers - method that create transfers to the "vipcoin_chain_banking_system_msg_reward_transfer"
+func (r Repository) SaveMsgSystemRewardTransfers(transfers *bankingtypes.MsgSystemRewardTransfer, transactionHash string) error {
+	query := `INSERT INTO vipcoin_chain_banking_system_msg_reward_transfer 
+		(transaction_hash, creator, wallet_from, wallet_to, asset, amount, extras) 
 		VALUES 
-		(:creator, :wallet_from, :wallet_to, :asset, :amount, :extras)`
+		(:transaction_hash, :creator, :wallet_from, :wallet_to, :asset, :amount, :extras)`
 
-	if _, err := r.db.NamedExec(query, toMsgSystemRewardTransfersDatabase(transfers...)); err != nil {
+	if _, err := r.db.NamedExec(query, toMsgSystemRewardTransferDatabase(transfers, transactionHash)); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// GetMsgSystemRewardTransfers - method that get transfers from the "vipcoin_chain_banking_system_reward_transfer"
+// GetMsgSystemRewardTransfers - method that get transfers from the "vipcoin_chain_banking_system_msg_reward_transfer"
 func (r Repository) GetMsgSystemRewardTransfers(filter filter.Filter) ([]*bankingtypes.MsgSystemRewardTransfer, error) {
 	query, args := filter.Build(
 		tableMsgSystemRewardTransfer,
@@ -33,7 +29,7 @@ func (r Repository) GetMsgSystemRewardTransfers(filter filter.Filter) ([]*bankin
 		types.FieldAsset, types.FieldAmount, types.FieldExtras,
 	)
 
-	var result []types.DBSystemRewardTransfer
+	var result []types.DBMsgSystemRewardTransfer
 	if err := r.db.Select(&result, query, args...); err != nil {
 		return []*bankingtypes.MsgSystemRewardTransfer{}, err
 	}

@@ -8,20 +8,14 @@ import (
 )
 
 // SaveDefaultWallets - inserts messages into the "vipcoin_chain_wallets_set_default_wallet" table
-func (r Repository) SaveDefaultWallets(messages ...*walletstypes.MsgSetDefaultWallet) error {
-	if len(messages) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveDefaultWallets(messages *walletstypes.MsgSetDefaultWallet, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_wallets_set_default_wallet 
-			(creator, address) 
+			(transaction_hash, creator, address) 
 			VALUES 
-			(:creator, :address)`
+			(:transaction_hash, :creator, :address)`
 
-	for _, m := range messages {
-		if _, err := r.db.NamedExec(query, toSetDefaultWalletDatabase(m)); err != nil {
-			return err
-		}
+	if _, err := r.db.NamedExec(query, toSetDefaultWalletDatabase(messages, transactionHash)); err != nil {
+		return err
 	}
 
 	return nil

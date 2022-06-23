@@ -8,17 +8,13 @@ import (
 )
 
 // SaveCreateAccount - saves the given create account message inside the database
-func (r Repository) SaveCreateAccount(msg ...*accountstypes.MsgCreateAccount) error {
-	if len(msg) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveCreateAccount(msg *accountstypes.MsgCreateAccount, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_accounts_create_account 
-			(creator, hash, address, public_key, kinds, state, extras) 
+			(transaction_hash, creator, hash, address, public_key, kinds, state, extras) 
 		VALUES 
-			(:creator, :hash, :address, :public_key, :kinds, :state, :extras)`
+			(:transaction_hash, :creator, :hash, :address, :public_key, :kinds, :state, :extras)`
 
-	if _, err := r.db.NamedExec(query, toCreateAccountsDatabase(msg...)); err != nil {
+	if _, err := r.db.NamedExec(query, toCreateAccountDatabase(msg, transactionHash)); err != nil {
 		return err
 	}
 
