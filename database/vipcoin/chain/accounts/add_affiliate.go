@@ -2,6 +2,7 @@ package accounts
 
 import (
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -15,7 +16,7 @@ func (r Repository) SaveAddAffiliate(msg *accountstypes.MsgAddAffiliate, transac
 			(:transaction_hash, :creator, :account_hash, :affiliation_hash, :affiliation, :extras)`
 
 	if _, err := r.db.NamedExec(query, toAddAffiliateDatabase(msg, transactionHash)); err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -31,7 +32,7 @@ func (r Repository) GetAddAffiliate(accountFilter filter.Filter) ([]*accountstyp
 
 	var result []types.DBAddAffiliate
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*accountstypes.MsgAddAffiliate{}, err
+		return []*accountstypes.MsgAddAffiliate{}, errs.Internal{Cause: err.Error()}
 	}
 
 	affiliates := make([]*accountstypes.MsgAddAffiliate, 0, len(result))

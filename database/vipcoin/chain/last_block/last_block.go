@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 
+	"git.ooo.ua/vipcoin/lib/errs"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -42,7 +43,7 @@ func (r Repository) Get() (uint64, error) {
 			return 0, r.create(0)
 		}
 
-		return 0, err
+		return 0, errs.Internal{Cause: err.Error()}
 	}
 
 	return blockNum, nil
@@ -53,7 +54,7 @@ func (r Repository) Update(id uint64) error {
 	query := `UPDATE last_block SET block = $1`
 
 	if _, err := r.db.Exec(query, id); err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil

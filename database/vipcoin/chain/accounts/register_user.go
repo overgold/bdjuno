@@ -2,6 +2,7 @@ package accounts
 
 import (
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -17,7 +18,7 @@ func (r Repository) SaveRegisterUser(msg *accountstypes.MsgRegisterUser, transac
 			:holder_wallet_extras, :ref_reward_wallet_extras, :referrer_hash)`
 
 	if _, err := r.db.NamedExec(query, toRegisterUserDatabase(msg, transactionHash)); err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -34,7 +35,7 @@ func (r Repository) GetRegisterUser(accountFilter filter.Filter) ([]*accountstyp
 
 	var result []types.DBRegisterUser
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*accountstypes.MsgRegisterUser{}, err
+		return []*accountstypes.MsgRegisterUser{}, errs.Internal{Cause: err.Error()}
 	}
 
 	users := make([]*accountstypes.MsgRegisterUser, 0, len(result))

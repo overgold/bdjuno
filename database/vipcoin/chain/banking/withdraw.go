@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -18,7 +19,7 @@ func (r Repository) SaveWithdraws(withdraws ...*bankingtypes.Withdraw) error {
 
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	defer tx.Rollback()
@@ -37,11 +38,11 @@ func (r Repository) SaveWithdraws(withdraws ...*bankingtypes.Withdraw) error {
 		withdrawDB := toWithdrawDatabase(withdraw)
 
 		if _, err := tx.NamedExec(queryBaseTransfer, withdrawDB); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 
 		if _, err := tx.NamedExec(queryWithdraw, withdrawDB); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 	}
 
@@ -58,7 +59,7 @@ func (r Repository) GetWithdraws(filter filter.Filter) ([]*bankingtypes.Withdraw
 
 	var withdrawsDB []types.DBWithdraw
 	if err := r.db.Select(&withdrawsDB, query, args...); err != nil {
-		return []*bankingtypes.Withdraw{}, err
+		return []*bankingtypes.Withdraw{}, errs.Internal{Cause: err.Error()}
 	}
 
 	result := make([]*bankingtypes.Withdraw, 0, len(withdrawsDB))
@@ -77,7 +78,7 @@ func (r Repository) UpdateWithdraws(withdraws ...*bankingtypes.Withdraw) error {
 
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	defer tx.Rollback()
@@ -96,11 +97,11 @@ func (r Repository) UpdateWithdraws(withdraws ...*bankingtypes.Withdraw) error {
 		withdrawDB := toWithdrawDatabase(withdraw)
 
 		if _, err := tx.NamedExec(queryBaseTransfer, withdrawDB); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 
 		if _, err := tx.NamedExec(queryWithdraw, withdrawDB); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 	}
 

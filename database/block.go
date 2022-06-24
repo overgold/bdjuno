@@ -17,7 +17,7 @@ func (db *Db) GetBlock(filter filter.Filter) (types.BlockRow, error) {
 	var result types.BlockRow
 	if err := db.Sqlx.Get(&result, query, args...); err != nil {
 		if !errors.Is(err, sql.ErrNoRows) {
-			return types.BlockRow{}, err
+			return types.BlockRow{}, errs.Internal{Cause: err.Error()}
 		}
 
 		return types.BlockRow{}, errs.NotFound{What: "blocks"}
@@ -32,7 +32,7 @@ func (db *Db) GetBlocks(filter filter.Filter) ([]types.BlockRow, error) {
 
 	var val []types.BlockRow
 	if err := db.Sqlx.Select(&val, query, args...); err != nil {
-		return []types.BlockRow{}, err
+		return []types.BlockRow{}, errs.Internal{Cause: err.Error()}
 	}
 
 	if len(val) == 0 {

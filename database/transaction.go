@@ -24,7 +24,7 @@ func (db *Db) GetTransaction(filter filter.Filter) (*txtypes.Tx, error) {
 	var result types.TransactionRow
 	if err := db.Sqlx.Get(&result, query, args...); err != nil {
 		if !errors.Is(err, sql.ErrNoRows) {
-			return &txtypes.Tx{}, err
+			return &txtypes.Tx{}, errs.Internal{Cause: err.Error()}
 		}
 
 		return &txtypes.Tx{}, errs.NotFound{What: "transaction"}
@@ -39,7 +39,7 @@ func (db *Db) GetTransactions(filter filter.Filter) ([]*txtypes.Tx, error) {
 
 	var result []types.TransactionRow
 	if err := db.Sqlx.Select(&result, query, args...); err != nil {
-		return []*txtypes.Tx{}, err
+		return []*txtypes.Tx{}, errs.Internal{Cause: err.Error()}
 	}
 
 	if len(result) == 0 {
@@ -50,7 +50,7 @@ func (db *Db) GetTransactions(filter filter.Filter) ([]*txtypes.Tx, error) {
 	for _, tx := range result {
 		transaction, err := db.toTxTypesTx(tx)
 		if err != nil {
-			return []*txtypes.Tx{}, err
+			return []*txtypes.Tx{}, errs.Internal{Cause: err.Error()}
 		}
 
 		transactions = append(transactions, transaction)

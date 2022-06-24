@@ -2,6 +2,7 @@ package wallets
 
 import (
 	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -15,7 +16,7 @@ func (r Repository) SaveDefaultWallets(messages *walletstypes.MsgSetDefaultWalle
 			(:transaction_hash, :creator, :address)`
 
 	if _, err := r.db.NamedExec(query, toSetDefaultWalletDatabase(messages, transactionHash)); err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -27,7 +28,7 @@ func (r Repository) GetDefaultWallets(filter filter.Filter) ([]*walletstypes.Msg
 
 	var wallets []types.DBSetDefaultWallet
 	if err := r.db.Select(&wallets, query, args...); err != nil {
-		return []*walletstypes.MsgSetDefaultWallet{}, err
+		return []*walletstypes.MsgSetDefaultWallet{}, errs.Internal{Cause: err.Error()}
 	}
 
 	result := make([]*walletstypes.MsgSetDefaultWallet, 0, len(wallets))

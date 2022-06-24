@@ -2,6 +2,7 @@ package accounts
 
 import (
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -15,7 +16,7 @@ func (r Repository) SaveState(msg *accountstypes.MsgSetState, transactionHash st
 			(:transaction_hash, :creator, :hash, :state, :reason)`
 
 	if _, err := r.db.NamedExec(query, toSetStateDatabase(msg, transactionHash)); err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -31,7 +32,7 @@ func (r Repository) GetState(accountFilter filter.Filter) ([]*accountstypes.MsgS
 
 	var result []types.DBSetState
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*accountstypes.MsgSetState{}, err
+		return []*accountstypes.MsgSetState{}, errs.Internal{Cause: err.Error()}
 	}
 
 	states := make([]*accountstypes.MsgSetState, 0, len(result))

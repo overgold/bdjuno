@@ -2,6 +2,7 @@ package banking
 
 import (
 	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -15,7 +16,7 @@ func (r Repository) SaveMsgSetTransferExtra(extras *bankingtypes.MsgSetTransferE
 		(:transaction_hash, :creator, :id, :extras)`
 
 	if _, err := r.db.NamedExec(query, toMsgSetTransferExtraDatabase(extras, transactionHash)); err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -30,7 +31,7 @@ func (r Repository) GetMsgSetTransferExtra(filter filter.Filter) ([]*bankingtype
 
 	var result []types.DBSetTransferExtra
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*bankingtypes.MsgSetTransferExtra{}, err
+		return []*bankingtypes.MsgSetTransferExtra{}, errs.Internal{Cause: err.Error()}
 	}
 
 	extras := make([]*bankingtypes.MsgSetTransferExtra, 0, len(result))

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -18,7 +19,7 @@ func (r Repository) SavePayments(payments ...*bankingtypes.Payment) error {
 
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	defer tx.Rollback()
@@ -37,11 +38,11 @@ func (r Repository) SavePayments(payments ...*bankingtypes.Payment) error {
 		paymentDB := toPaymentDatabase(payment)
 
 		if _, err := tx.NamedExec(queryBaseTransfer, paymentDB); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 
 		if _, err := tx.NamedExec(queryPayment, paymentDB); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 	}
 
@@ -58,7 +59,7 @@ func (r Repository) GetPayments(filter filter.Filter) ([]*bankingtypes.Payment, 
 
 	var paymentsDB []types.DBPayment
 	if err := r.db.Select(&paymentsDB, query, args...); err != nil {
-		return []*bankingtypes.Payment{}, err
+		return []*bankingtypes.Payment{}, errs.Internal{Cause: err.Error()}
 	}
 
 	result := make([]*bankingtypes.Payment, 0, len(paymentsDB))

@@ -2,6 +2,7 @@ package banking
 
 import (
 	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -15,7 +16,7 @@ func (r Repository) SaveMsgSystemRewardTransfers(transfers *bankingtypes.MsgSyst
 		(:transaction_hash, :creator, :wallet_from, :wallet_to, :asset, :amount, :extras)`
 
 	if _, err := r.db.NamedExec(query, toMsgSystemRewardTransferDatabase(transfers, transactionHash)); err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -31,7 +32,7 @@ func (r Repository) GetMsgSystemRewardTransfers(filter filter.Filter) ([]*bankin
 
 	var result []types.DBMsgSystemRewardTransfer
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*bankingtypes.MsgSystemRewardTransfer{}, err
+		return []*bankingtypes.MsgSystemRewardTransfer{}, errs.Internal{Cause: err.Error()}
 	}
 
 	transfers := make([]*bankingtypes.MsgSystemRewardTransfer, 0, len(result))

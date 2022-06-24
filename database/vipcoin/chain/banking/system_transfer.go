@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -18,7 +19,7 @@ func (r Repository) SaveSystemTransfers(transfers ...*bankingtypes.SystemTransfe
 
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	defer tx.Rollback()
@@ -37,11 +38,11 @@ func (r Repository) SaveSystemTransfers(transfers ...*bankingtypes.SystemTransfe
 		transferDB := toSystemTransferDatabase(transfer)
 
 		if _, err := tx.NamedExec(queryBaseTransfer, transferDB); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 
 		if _, err := tx.NamedExec(querySystemTransfer, transferDB); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 	}
 
@@ -58,7 +59,7 @@ func (r Repository) GetSystemTransfers(filter filter.Filter) ([]*bankingtypes.Sy
 
 	var transfersDB []types.DBSystemTransfer
 	if err := r.db.Select(&transfersDB, query, args...); err != nil {
-		return []*bankingtypes.SystemTransfer{}, err
+		return []*bankingtypes.SystemTransfer{}, errs.Internal{Cause: err.Error()}
 	}
 
 	result := make([]*bankingtypes.SystemTransfer, 0, len(transfersDB))
@@ -77,7 +78,7 @@ func (r Repository) UpdateSystemTransfers(transfers ...*bankingtypes.SystemTrans
 
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	defer tx.Rollback()
@@ -96,11 +97,11 @@ func (r Repository) UpdateSystemTransfers(transfers ...*bankingtypes.SystemTrans
 		transferDB := toSystemTransfersDatabase(transfer)
 
 		if _, err := tx.NamedExec(queryBaseTransfer, transferDB); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 
 		if _, err := tx.NamedExec(queryTransfer, transferDB); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 	}
 

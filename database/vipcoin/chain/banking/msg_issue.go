@@ -2,6 +2,7 @@ package banking
 
 import (
 	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -15,7 +16,7 @@ func (r Repository) SaveMsgIssue(issue *bankingtypes.MsgIssue, transactionHash s
 		(:transaction_hash, :creator, :wallet, :asset, :amount, :extras)`
 
 	if _, err := r.db.NamedExec(query, toMsgIssueDatabase(issue, transactionHash)); err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -31,7 +32,7 @@ func (r Repository) GetMsgIssue(filter filter.Filter) ([]*bankingtypes.MsgIssue,
 
 	var result []types.DBMsgIssue
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*bankingtypes.MsgIssue{}, err
+		return []*bankingtypes.MsgIssue{}, errs.Internal{Cause: err.Error()}
 	}
 
 	issues := make([]*bankingtypes.MsgIssue, 0, len(result))

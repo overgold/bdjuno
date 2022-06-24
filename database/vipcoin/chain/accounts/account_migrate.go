@@ -2,6 +2,7 @@ package accounts
 
 import (
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -15,7 +16,7 @@ func (r Repository) SaveAccountMigrate(msg *accountstypes.MsgAccountMigrate, tra
 			(:transaction_hash, :creator, :address, :hash, :public_key)`
 
 	if _, err := r.db.NamedExec(query, toAccountMigrateDatabase(msg, transactionHash)); err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -31,7 +32,7 @@ func (r Repository) GetAccountMigrate(accountFilter filter.Filter) ([]*accountst
 
 	var result []types.DBAccountMigrate
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*accountstypes.MsgAccountMigrate{}, err
+		return []*accountstypes.MsgAccountMigrate{}, errs.Internal{Cause: err.Error()}
 	}
 
 	migrates := make([]*accountstypes.MsgAccountMigrate, 0, len(result))

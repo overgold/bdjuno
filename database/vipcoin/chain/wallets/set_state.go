@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -18,7 +19,7 @@ func (r Repository) SaveStates(messages *walletstypes.MsgSetWalletState, transac
 			(:transaction_hash, :creator, :address, :state)`
 
 	if _, err := r.db.NamedExec(query, toSetWalletStateDatabase(messages, transactionHash)); err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -31,7 +32,7 @@ func (r Repository) GetStates(filter filter.Filter) ([]*walletstypes.MsgSetWalle
 
 	var result []types.DBSetWalletState
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*walletstypes.MsgSetWalletState{}, err
+		return []*walletstypes.MsgSetWalletState{}, errs.Internal{Cause: err.Error()}
 	}
 
 	states := make([]*walletstypes.MsgSetWalletState, 0, len(result))
@@ -62,11 +63,11 @@ func (r Repository) UpdateStates(messages ...*walletstypes.MsgSetWalletState) er
 	for _, m := range messages {
 		stateDB := toSetWalletStateDatabase(m, "")
 		if err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 
 		if _, err := tx.NamedExec(query, stateDB); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 	}
 

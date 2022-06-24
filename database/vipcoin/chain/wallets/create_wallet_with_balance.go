@@ -2,6 +2,7 @@ package wallets
 
 import (
 	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -15,7 +16,7 @@ func (r Repository) SaveCreateWalletWithBalance(msg *walletstypes.MsgCreateWalle
 			(:transaction_hash, :creator, :address, :account_address, :kind, :state, :extras, :default_status, :balance)`
 
 	if _, err := r.db.NamedExec(query, toCreateWalletWithBalanceDatabase(msg, transactionHash)); err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -31,7 +32,7 @@ func (r Repository) GetCreateWalletWithBalance(walletFilter filter.Filter) ([]*w
 
 	var result []types.DBCreateWalletWithBalance
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*walletstypes.MsgCreateWalletWithBalance{}, err
+		return []*walletstypes.MsgCreateWalletWithBalance{}, errs.Internal{Cause: err.Error()}
 	}
 
 	wallets := make([]*walletstypes.MsgCreateWalletWithBalance, 0, len(result))

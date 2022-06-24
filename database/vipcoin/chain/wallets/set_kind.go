@@ -2,6 +2,7 @@ package wallets
 
 import (
 	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -15,7 +16,7 @@ func (r Repository) SaveKinds(messages *walletstypes.MsgSetWalletKind, transacti
 			(:transaction_hash, :creator, :address, :kind)`
 
 	if _, err := r.db.NamedExec(query, toSetKindDatabase(messages, transactionHash)); err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -28,7 +29,7 @@ func (r Repository) GetKinds(filter filter.Filter) ([]*walletstypes.MsgSetWallet
 
 	var kindsDB []types.DBSetWalletKind
 	if err := r.db.Select(&kindsDB, query, args...); err != nil {
-		return []*walletstypes.MsgSetWalletKind{}, err
+		return []*walletstypes.MsgSetWalletKind{}, errs.Internal{Cause: err.Error()}
 	}
 
 	kinds := make([]*walletstypes.MsgSetWalletKind, 0, len(kindsDB))
