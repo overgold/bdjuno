@@ -14,10 +14,7 @@ import (
 	"github.com/forbole/bdjuno/v2/modules/pricefeed"
 	"github.com/forbole/bdjuno/v2/modules/slashing"
 	"github.com/forbole/bdjuno/v2/modules/staking"
-	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts"
-	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/assets"
-	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking"
-	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets"
+	"github.com/forbole/bdjuno/v2/modules/vipcoin"
 	"github.com/forbole/bdjuno/v2/utils"
 	jmodules "github.com/forbole/juno/v2/modules"
 	"github.com/forbole/juno/v2/modules/messages"
@@ -81,7 +78,6 @@ func NewRegistrar(parser messages.MessageAddressesParser) *Registrar {
 func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	cdc := ctx.EncodingConfig.Marshaler
 	db := database.Cast(ctx.Database)
-	storeKey := sdk.NewKVStoreKey(bankingtypes.StoreKey)
 
 	sources, err := types.BuildSources(ctx.JunoConfig.Node, ctx.EncodingConfig)
 	if err != nil {
@@ -99,10 +95,16 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	stakingModule := staking.NewModule(sources.StakingSource, slashingModule, cdc, db)
 	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
 
-	vipcoinAccountsModule := accounts.NewModule(sources.VipcoinAccountsSource, cdc, db)
-	vipcoinWalletsModule := wallets.NewModule(r.parser, sources.VipcoinWalletsSource, cdc, db)
-	vipcoinBankingModule := banking.NewModule(sources.VipcoinBankingSource, storeKey, cdc, db)
-	vipcoinAssetsModule := assets.NewModule(sources.VipcoinAssetsSource, cdc, db)
+	vipcoinModules := vipcoin.NewModule(
+		cdc,
+		db,
+		ctx.Logger,
+
+		sources.VipcoinAccountsSource,
+		sources.VipcoinWalletsSource,
+		sources.VipcoinBankingSource,
+		sources.VipcoinAssetsSource,
+	)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),
@@ -122,9 +124,6 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		slashingModule,
 		stakingModule,
 
-		vipcoinAccountsModule,
-		vipcoinWalletsModule,
-		vipcoinBankingModule,
-		vipcoinAssetsModule,
+		vipcoinModules,
 	}
 }
