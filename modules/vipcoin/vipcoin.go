@@ -4,20 +4,16 @@ import (
 	"sync"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/juno/v2/logging"
-	"github.com/forbole/juno/v2/modules"
-	jmodules "github.com/forbole/juno/v2/modules"
+	"github.com/forbole/juno/v3/logging"
+	"github.com/forbole/juno/v3/modules"
+	jmodules "github.com/forbole/juno/v3/modules"
 
-	"github.com/forbole/bdjuno/v2/database"
-	"github.com/forbole/bdjuno/v2/database/vipcoin/chain/last_block"
-	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts"
-	vipcoinaccountssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts/source"
-	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/assets"
-	vipcoinassetssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/assets/source"
-	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking"
-	vipcoinbankingsource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking/source"
-	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets"
-	vipcoinwalletssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source"
+	"github.com/forbole/bdjuno/v3/database"
+	"github.com/forbole/bdjuno/v3/database/vipcoin/chain/last_block"
+	"github.com/forbole/bdjuno/v3/modules/vipcoin/chain/accounts"
+	"github.com/forbole/bdjuno/v3/modules/vipcoin/chain/assets"
+	"github.com/forbole/bdjuno/v3/modules/vipcoin/chain/banking"
+	"github.com/forbole/bdjuno/v3/modules/vipcoin/chain/wallets"
 )
 
 var (
@@ -32,7 +28,7 @@ type vipcoinModule interface {
 }
 
 type module struct {
-	cdc            codec.Marshaler
+	cdc            codec.Codec
 	db             *database.Db
 	lastBlockRepo  last_block.Repository
 	logger         logging.Logger
@@ -43,14 +39,9 @@ type module struct {
 }
 
 func NewModule(
-	cdc codec.Marshaler,
+	cdc codec.Codec,
 	db *database.Db,
 	logger logging.Logger,
-
-	VipcoinAccountsSource vipcoinaccountssource.Source,
-	VipcoinWalletsSource vipcoinwalletssource.Source,
-	VipcoinBankingSource vipcoinbankingsource.Source,
-	VipcoinAssetsSource vipcoinassetssource.Source,
 ) *module {
 	module := &module{
 		cdc:           cdc,
@@ -58,10 +49,10 @@ func NewModule(
 		lastBlockRepo: *last_block.NewRepository(db.Sqlx),
 		logger:        logger,
 		vipcoinModules: []vipcoinModule{
-			accounts.NewModule(VipcoinAccountsSource, cdc, db),
-			assets.NewModule(VipcoinAssetsSource, cdc, db),
-			banking.NewModule(VipcoinBankingSource, cdc, db),
-			wallets.NewModule(VipcoinWalletsSource, cdc, db),
+			accounts.NewModule(cdc, db),
+			assets.NewModule(cdc, db),
+			banking.NewModule(cdc, db),
+			wallets.NewModule(cdc, db),
 		},
 	}
 

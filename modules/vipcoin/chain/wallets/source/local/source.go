@@ -2,8 +2,8 @@ package local
 
 import (
 	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
-	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source"
-	"github.com/forbole/juno/v2/node/local"
+	"github.com/forbole/bdjuno/v3/modules/vipcoin/chain/wallets/source"
+	"github.com/forbole/juno/v3/node/local"
 )
 
 var (

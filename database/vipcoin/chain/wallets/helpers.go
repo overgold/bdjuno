@@ -5,7 +5,7 @@ import (
 	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
 	cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/forbole/bdjuno/v2/database/types"
+	"github.com/forbole/bdjuno/v3/database/types"
 )
 
 // toExtrasDB - mapping func to database model

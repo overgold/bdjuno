@@ -1,8 +1,8 @@
 package remote
 
 import (
-	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/assets/source"
-	"github.com/forbole/juno/v2/node/remote"
+	"github.com/forbole/bdjuno/v3/modules/vipcoin/chain/assets/source"
+	"github.com/forbole/juno/v3/node/remote"
 
 	assetstypes "git.ooo.ua/vipcoin/chain/x/assets/types"
 )

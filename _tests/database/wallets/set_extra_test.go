@@ -11,8 +11,8 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 
-	dbtypes "github.com/forbole/bdjuno/v2/database/types"
-	walletsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/wallets"
+	dbtypes "github.com/forbole/bdjuno/v3/database/types"
+	walletsdb "github.com/forbole/bdjuno/v3/database/vipcoin/chain/wallets"
 )
 
 func TestRepository_SaveMsgSetExtra(t *testing.T) {

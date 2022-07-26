@@ -9,7 +9,7 @@ import (
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
-	assetsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/assets"
+	assetsdb "github.com/forbole/bdjuno/v3/database/vipcoin/chain/assets"
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 )

@@ -2,14 +2,13 @@ package banking
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/juno/v2/modules"
+	"github.com/forbole/juno/v3/modules"
 
-	"github.com/forbole/bdjuno/v2/database"
-	"github.com/forbole/bdjuno/v2/database/vipcoin/chain/accounts"
-	"github.com/forbole/bdjuno/v2/database/vipcoin/chain/assets"
-	"github.com/forbole/bdjuno/v2/database/vipcoin/chain/banking"
-	"github.com/forbole/bdjuno/v2/database/vipcoin/chain/wallets"
-	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking/source"
+	"github.com/forbole/bdjuno/v3/database"
+	"github.com/forbole/bdjuno/v3/database/vipcoin/chain/accounts"
+	"github.com/forbole/bdjuno/v3/database/vipcoin/chain/assets"
+	"github.com/forbole/bdjuno/v3/database/vipcoin/chain/banking"
+	"github.com/forbole/bdjuno/v3/database/vipcoin/chain/wallets"
 )
 
 var (
@@ -20,17 +19,16 @@ var (
 
 // Module represents the x/banking module
 type Module struct {
-	cdc          codec.Marshaler
+	cdc          codec.Codec
 	db           *database.Db
 	bankingRepo  banking.Repository
 	walletsRepo  wallets.Repository
 	assetRepo    assets.Repository
 	accountsRepo accounts.Repository
-	keeper       source.Source
 }
 
 // NewModule returns a new Module instance
-func NewModule(keeper source.Source, cdc codec.Marshaler, db *database.Db) *Module {
+func NewModule(cdc codec.Codec, db *database.Db) *Module {
 	return &Module{
 		cdc:          cdc,
 		db:           db,
@@ -38,7 +36,6 @@ func NewModule(keeper source.Source, cdc codec.Marshaler, db *database.Db) *Modu
 		walletsRepo:  *wallets.NewRepository(db.Sqlx, cdc),
 		assetRepo:    *assets.NewRepository(db.Sqlx, cdc),
 		accountsRepo: *accounts.NewRepository(db.Sqlx, cdc),
-		keeper:       keeper,
 	}
 }
 

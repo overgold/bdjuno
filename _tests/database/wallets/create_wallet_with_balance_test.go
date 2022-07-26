@@ -12,8 +12,8 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 
-	typesdb "github.com/forbole/bdjuno/v2/database/types"
-	walletsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/wallets"
+	typesdb "github.com/forbole/bdjuno/v3/database/types"
+	walletsdb "github.com/forbole/bdjuno/v3/database/vipcoin/chain/wallets"
 )
 
 func TestRepository_SaveCreateWalletWithBalance(t *testing.T) {

@@ -15,8 +15,8 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 
-	"github.com/forbole/bdjuno/v2/database/types"
-	accountsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/accounts"
+	"github.com/forbole/bdjuno/v3/database/types"
+	accountsdb "github.com/forbole/bdjuno/v3/database/vipcoin/chain/accounts"
 )
 
 func TestRepository_SaveRegisterUser(t *testing.T) {

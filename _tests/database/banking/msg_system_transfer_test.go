@@ -12,8 +12,8 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 
-	"github.com/forbole/bdjuno/v2/database/types"
-	bankingdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/banking"
+	"github.com/forbole/bdjuno/v3/database/types"
+	bankingdb "github.com/forbole/bdjuno/v3/database/vipcoin/chain/banking"
 )
 
 func TestRepository_SaveMsgSystemTransfers(t *testing.T) {

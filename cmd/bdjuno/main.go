@@ -3,16 +3,8 @@ package main
 import (
 	chainapp "git.ooo.ua/vipcoin/chain/app"
 	"github.com/cosmos/cosmos-sdk/types/module"
+
 	gaiaapp "github.com/cosmos/gaia/v7/app"
-	migratecmd "github.com/forbole/bdjuno/v2/cmd/migrate"
-	vault "github.com/forbole/bdjuno/v2/config"
-	"github.com/forbole/bdjuno/v2/database"
-	"github.com/forbole/bdjuno/v2/modules"
-	"github.com/forbole/bdjuno/v2/types/config"
-	"github.com/forbole/juno/v2/cmd"
-	initcmd "github.com/forbole/juno/v2/cmd/init"
-	parsecmd "github.com/forbole/juno/v2/cmd/parse"
-	"github.com/forbole/juno/v2/modules/messages"
 	"github.com/forbole/juno/v3/cmd"
 	initcmd "github.com/forbole/juno/v3/cmd/init"
 	parsetypes "github.com/forbole/juno/v3/cmd/parse/types"
@@ -21,6 +13,7 @@ import (
 
 	migratecmd "github.com/forbole/bdjuno/v3/cmd/migrate"
 	parsecmd "github.com/forbole/bdjuno/v3/cmd/parse"
+	vault "github.com/forbole/bdjuno/v3/config"
 	"github.com/forbole/bdjuno/v3/database"
 	"github.com/forbole/bdjuno/v3/modules"
 	"github.com/forbole/bdjuno/v3/types/config"

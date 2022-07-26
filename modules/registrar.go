@@ -3,24 +3,6 @@ package modules
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/forbole/bdjuno/v2/database"
-	"github.com/forbole/bdjuno/v2/modules/auth"
-	"github.com/forbole/bdjuno/v2/modules/bank"
-	"github.com/forbole/bdjuno/v2/modules/consensus"
-	"github.com/forbole/bdjuno/v2/modules/distribution"
-	"github.com/forbole/bdjuno/v2/modules/gov"
-	"github.com/forbole/bdjuno/v2/modules/mint"
-	"github.com/forbole/bdjuno/v2/modules/modules"
-	"github.com/forbole/bdjuno/v2/modules/pricefeed"
-	"github.com/forbole/bdjuno/v2/modules/slashing"
-	"github.com/forbole/bdjuno/v2/modules/staking"
-	"github.com/forbole/bdjuno/v2/modules/vipcoin"
-	"github.com/forbole/bdjuno/v2/utils"
-	jmodules "github.com/forbole/juno/v2/modules"
-	"github.com/forbole/juno/v2/modules/messages"
-	"github.com/forbole/juno/v2/modules/pruning"
-	"github.com/forbole/juno/v2/modules/registrar"
-	"github.com/forbole/juno/v2/modules/telemetry"
 	jmodules "github.com/forbole/juno/v3/modules"
 	"github.com/forbole/juno/v3/modules/messages"
 	"github.com/forbole/juno/v3/modules/pruning"
@@ -41,6 +23,7 @@ import (
 	"github.com/forbole/bdjuno/v3/modules/slashing"
 	"github.com/forbole/bdjuno/v3/modules/staking"
 	"github.com/forbole/bdjuno/v3/modules/types"
+	"github.com/forbole/bdjuno/v3/modules/vipcoin"
 	"github.com/forbole/bdjuno/v3/utils"
 )
 
@@ -95,16 +78,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	stakingModule := staking.NewModule(sources.StakingSource, slashingModule, cdc, db)
 	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
 
-	vipcoinModules := vipcoin.NewModule(
-		cdc,
-		db,
-		ctx.Logger,
-
-		sources.VipcoinAccountsSource,
-		sources.VipcoinWalletsSource,
-		sources.VipcoinBankingSource,
-		sources.VipcoinAssetsSource,
-	)
+	vipcoinModules := vipcoin.NewModule(cdc, db, ctx.Logger)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),

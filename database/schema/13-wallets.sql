@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_wallets (
 
 CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_set_wallet_kind (
     id                SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    transaction_hash  TEXT    NOT NULL REFERENCES transaction (hash),
+    transaction_hash  TEXT    NOT NULL,
     creator           TEXT    NOT NULL,                           -- message creator
     address           TEXT    NOT NULL,                           -- target wallet address
     kind              INT                                         -- new kind for target wallet
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_set_wallet_kind (
 
 CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_set_wallet_state (
     id               SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    transaction_hash TEXT    NOT NULL REFERENCES transaction (hash),
+    transaction_hash TEXT    NOT NULL,
     creator          TEXT    NOT NULL,                           -- message creator
     address          TEXT    NOT NULL,                           -- target wallet address
     state            INT                                         -- new state for target wallet
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_set_wallet_state (
 
 CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_create_wallet (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    transaction_hash    TEXT    NOT NULL REFERENCES transaction (hash),
+    transaction_hash    TEXT    NOT NULL,
     creator             TEXT    NOT NULL,                   -- message creator
     address             TEXT    NOT NULL,                   -- target wallet address
     account_address     TEXT    NOT NULL,                   -- new account address for target wallet
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_create_wallet (
 
 CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_create_wallet_with_balance (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    transaction_hash    TEXT        NOT NULL REFERENCES transaction (hash),
+    transaction_hash    TEXT        NOT NULL,
     creator             TEXT        NOT NULL,               -- message creator
     address             TEXT        NOT NULL,               -- target wallet address
     account_address     TEXT        NOT NULL,               -- new account address for target wallet
@@ -54,14 +54,14 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_create_wallet_with_balance (
 
 CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_set_default_wallet (
     id               SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    transaction_hash TEXT        NOT NULL REFERENCES transaction (hash),
+    transaction_hash TEXT        NOT NULL,
     creator          TEXT        NOT NULL,                       -- message creator
     address          TEXT        NOT NULL                        -- target wallet address
 );
 
 CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_set_extra (
     id                SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    transaction_hash  TEXT        NOT NULL REFERENCES transaction (hash),
+    transaction_hash  TEXT        NOT NULL,
     creator           TEXT        NOT NULL,                       -- message creator
     address           TEXT        NOT NULL,                       -- target wallet address
     extras            JSONB                                       -- new extras for target wallet
