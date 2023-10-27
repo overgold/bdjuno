@@ -131,12 +131,12 @@ func (m *Module) handleMsgCreateWallet(tx *juno.Tx, index int, msg *typeswallets
 	coin := sdk.NewCoin(assets.AssetOVG, sdk.NewIntFromUint64(createWalletPrice.Amount))
 	if !coin.IsZero() {
 		walletPayFromAddress.Balance = walletPayFromAddress.Balance.Sub(sdk.NewCoins(coin))
-		if err := m.walletsRepo.SaveWallets(walletPayFromAddress); err != nil {
+		if err := m.walletsRepo.UpdateWallets(walletPayFromAddress); err != nil {
 			return err
 		}
 
 		systemWalletForFeePayment[0].Balance = systemWalletForFeePayment[0].Balance.Add(coin)
-		if err := m.walletsRepo.SaveWallets(systemWalletForFeePayment[0]); err != nil {
+		if err := m.walletsRepo.UpdateWallets(systemWalletForFeePayment[0]); err != nil {
 			return err
 		}
 	}
