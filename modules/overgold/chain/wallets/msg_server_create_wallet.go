@@ -26,6 +26,19 @@ func (m *Module) handleMsgCreateWallet(tx *juno.Tx, index int, msg *typeswallets
 
 	account := accountArr[0]
 
+	// check if wallet already exists
+	wallets, err := m.walletsRepo.GetWallets(filter.NewFilter().SetArgument(dbtypes.FieldAddress, msg.Address))
+	if err != nil {
+		return err
+	}
+	if len(wallets) > 0 {
+		for _, wallet := range wallets {
+			if wallet.Address == msg.Address {
+				return nil
+			}
+		}
+	}
+
 	createWalletPrice, err := m.walletsRepo.GetSetCreateUserWalletPrice(filter.NewFilter().SetSort(dbtypes.FieldID, filter.DirectionDescending))
 	if err != nil {
 		if errors.As(err, &errs.Internal{}) {
