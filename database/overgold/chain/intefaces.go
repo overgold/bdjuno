@@ -5,6 +5,7 @@ import (
 	allowed "git.ooo.ua/vipcoin/ovg-chain/x/allowed/types"
 	core "git.ooo.ua/vipcoin/ovg-chain/x/core/types"
 	stake "git.ooo.ua/vipcoin/ovg-chain/x/stake/types"
+	core "git.ooo.ua/vipcoin/ovg-chain/x/core/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/types"
 )
 
