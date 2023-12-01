@@ -31,7 +31,7 @@ func (r Repository) GetAllMsgSend(filter filter.Filter) ([]core.MsgSend, error) 
 	return toMsgSendDomainList(result), nil
 }
 
-// InsertMsgSend - insert a new MsgCreateAddresses in a database (overgold_core_send).
+// InsertMsgSend - insert a new MsgSend in a database (overgold_core_send).
 func (r Repository) InsertMsgSend(hash string, msgs ...core.MsgSend) error {
 	if len(msgs) == 0 || hash == "" {
 		return nil

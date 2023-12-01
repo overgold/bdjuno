@@ -1,6 +1,8 @@
 package core
 
 import (
+	"fmt"
+
 	"git.ooo.ua/vipcoin/ovg-chain/x/core/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/forbole/juno/v5/types"
@@ -20,6 +22,6 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	case *types.MsgSend:
 		return m.handleMsgSend(tx, index, coreMsg)
 	default:
-		return nil // TODO: return err
+		return fmt.Errorf("unrecognized %s message type: %T", m.Name(), coreMsg)
 	}
 }

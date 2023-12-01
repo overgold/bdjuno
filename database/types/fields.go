@@ -23,6 +23,8 @@ const (
 	FieldKinds           = "kinds"
 	FieldNumTxs          = "num_txs"
 	FieldOutputs         = "outputs"
+	FieldReferralAddress = "referral_address"
+	FieldReferrerAddress = "referrer_address"
 	FieldTimestamp       = "timestamp"
 	FieldToAddress       = "to_address"
 	FieldTransactionHash = "transaction_hash"

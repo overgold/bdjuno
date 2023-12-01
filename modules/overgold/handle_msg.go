@@ -20,7 +20,7 @@ func (m *Module) scheduler() {
 	for {
 		lastBlock, err := m.lastBlockRepo.Get()
 		if err != nil {
-			m.logger.Error("Fail lastBlockRepo.Get", "module", module, "error", err)
+			m.logger.Error("Fail lastBlockRepo.Get", "module", m.Name(), "error", err)
 			continue
 		}
 
@@ -33,12 +33,12 @@ func (m *Module) scheduler() {
 				continue
 			}
 
-			m.logger.Error("Fail parseBlock", "module", module, "error", err)
+			m.logger.Error("Fail parseBlock", "module", m.Name(), "error", err)
 			continue
 		}
 
 		if err = m.lastBlockRepo.Update(lastBlock); err != nil {
-			m.logger.Error("Fail lastBlockRepo.Update", "module", module, "error", err)
+			m.logger.Error("Fail lastBlockRepo.Update", "module", m.Name(), "error", err)
 			os.Exit(1)
 		}
 	}
@@ -50,7 +50,7 @@ func (m *Module) parseBlock(lastBlock uint64) error {
 	if err != nil {
 		if errors.As(err, &errs.NotFound{}) {
 			if block, _, err = m.parseMissingBlocksAndTransactions(int64(lastBlock)); err != nil {
-				m.logger.Error("Fail parseMissingBlocksAndTransactions", "module", module, "error", err)
+				m.logger.Error("Fail parseMissingBlocksAndTransactions", "module", m.Name(), "error", err)
 				return errs.Internal{Cause: "Fail parseMissingBlocksAndTransactions, error: " + err.Error()}
 			}
 			return err
@@ -74,7 +74,7 @@ func (m *Module) parseTx(block dbtypes.BlockRow) error {
 	if err != nil {
 		if errors.As(err, &errs.NotFound{}) {
 			if block, _, err = m.parseMissingBlocksAndTransactions(block.Height); err != nil {
-				m.logger.Error("Fail parseMissingBlocksAndTransactions", "module", module, "error", err)
+				m.logger.Error("Fail parseMissingBlocksAndTransactions", "module", m.Name(), "error", err)
 				return errs.Internal{Cause: "Fail parseMissingBlocksAndTransactions, error: " + err.Error()}
 			}
 			return err
@@ -85,7 +85,7 @@ func (m *Module) parseTx(block dbtypes.BlockRow) error {
 
 	if err = block.CheckTxNumCount(int64(len(txs))); err != nil {
 		if _, txs, err = m.parseMissingBlocksAndTransactions(block.Height); err != nil {
-			m.logger.Error("Fail parseMissingBlocksAndTransactions", "module", module, "error", err)
+			m.logger.Error("Fail parseMissingBlocksAndTransactions", "module", m.Name(), "error", err)
 			return errs.Internal{Cause: "Fail parseMissingBlocksAndTransactions, error: " + err.Error()}
 		}
 
