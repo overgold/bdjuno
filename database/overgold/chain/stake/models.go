@@ -100,3 +100,55 @@ func toMsgBuyDatabase(hash string, m types.MsgBuyRequest) (db.StakeMsgBuy, error
 		Amount:  amount,
 	}, nil
 }
+
+// toMsgBuy - mapping func to a domain model.
+func toMsgDistribute(m db.StakeMsgDistribute) types.MsgDistributeRewards {
+	return types.MsgDistributeRewards{
+		Creator: m.Creator,
+	}
+}
+
+// toMsgDistributeDomainList - mapping func to a domain list.
+func toMsgDistributeDomainList(m []db.StakeMsgDistribute) []types.MsgDistributeRewards {
+	res := make([]types.MsgDistributeRewards, 0, len(m))
+	for _, msg := range m {
+		res = append(res, toMsgDistribute(msg))
+	}
+
+	return res
+}
+
+// toMsgDistributeDatabase - mapping func to a database model.
+func toMsgDistributeDatabase(hash string, m types.MsgDistributeRewards) db.StakeMsgDistribute {
+	return db.StakeMsgDistribute{
+		TxHash:  hash,
+		Creator: m.Creator,
+	}
+}
+
+// toMsgClaimReward - mapping func to a domain model.
+func toMsgClaimReward(m db.StakeMsgClaim) types.MsgClaimReward {
+	return types.MsgClaimReward{
+		Creator: m.Creator,
+		Amount:  sdk.NewCoin(chainDomain.DenomSTOVG, sdk.NewIntFromUint64(m.Amount)),
+	}
+}
+
+// toMsgClaimRewardDomainList - mapping func to a domain list.
+func toMsgClaimRewardDomainList(m []db.StakeMsgClaim) []types.MsgClaimReward {
+	res := make([]types.MsgClaimReward, 0, len(m))
+	for _, msg := range m {
+		res = append(res, toMsgClaimReward(msg))
+	}
+
+	return res
+}
+
+// toMsgClaimRewardDatabase - mapping func to a database model.
+func toMsgClaimRewardDatabase(hash string, m types.MsgClaimReward) db.StakeMsgClaim {
+	return db.StakeMsgClaim{
+		TxHash:  hash,
+		Creator: m.Creator,
+		Amount:  m.Amount.Amount.Uint64(),
+	}
+}

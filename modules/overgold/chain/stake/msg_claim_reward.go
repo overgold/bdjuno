@@ -12,20 +12,19 @@ import (
 	db "github.com/forbole/bdjuno/v4/database/types"
 )
 
-// handleMsgSell allows to properly handle a stake sell message
-func (m *Module) handleMsgSell(tx *juno.Tx, _ int, msg *types.MsgSellRequest) error {
-	msgs, err := m.stakeRepo.GetAllMsgSell(filter.NewFilter().SetCondition(filter.ConditionAND).
+// handleMsgClaimReward allows to properly handle a stake claim reward message
+func (m *Module) handleMsgClaimReward(tx *juno.Tx, _ int, msg *types.MsgClaimReward) error {
+	msgs, err := m.stakeRepo.GetAllMsgDistributeRewards(filter.NewFilter().SetCondition(filter.ConditionAND).
 		SetArgument(db.FieldTxHash, tx.TxHash).
 		SetArgument(db.FieldCreator, msg.Creator))
 	if err != nil && !errors.Is(err, errs.NotFound{}) {
 		return err
 	}
 	if len(msgs) > 0 {
-		return errs.AlreadyExists{What: fmt.Sprintf("msg sell, creator: %s, sell amount %s  ", msg.Creator, msg.Amount)}
+		return errs.AlreadyExists{What: fmt.Sprintf("msg claim reward, creator: %s", msg.Creator)}
 	}
 
-	return m.stakeRepo.InsertMsgSell(tx.TxHash, types.MsgSellRequest{
+	return m.stakeRepo.InsertMsgClaimReward(tx.TxHash, types.MsgClaimReward{
 		Creator: msg.Creator,
-		Amount:  msg.Amount,
 	})
 }

@@ -19,6 +19,10 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return m.handleMsgSellCancel(tx, index, stakeMsg)
 	case *types.MsgBuyRequest:
 		return m.handleMsgBuy(tx, index, stakeMsg)
+	case *types.MsgDistributeRewards:
+		return m.handleMsgDistributeRewards(tx, index, stakeMsg)
+	case *types.MsgClaimReward:
+		return m.handleMsgClaimReward(tx, index, stakeMsg)
 	default:
 		return nil // TODO: return err
 	}

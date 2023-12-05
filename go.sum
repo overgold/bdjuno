@@ -430,6 +430,8 @@ git.ooo.ua/vipcoin/lib/vault v1.0.7 h1:JhilEyX5h9I8R3bPMl0fIsHBMGPtSUW7Vmdx30sDr
 git.ooo.ua/vipcoin/lib/vault v1.0.7/go.mod h1:ErvGUS3M2pFnswC8vSDcr3fR/9+Jo5qkjwVZ47eRR+U=
 git.ooo.ua/vipcoin/ovg-chain v1.0.6 h1:AN4q1zDxIKI0F4viRz8K9HRwMDF7xTWtnjptB8cTofU=
 git.ooo.ua/vipcoin/ovg-chain v1.0.6/go.mod h1:43wl38IVkBVf/5mINj/ZO6JpG1zKyoQBn69Vmjp94Ig=
+git.ooo.ua/vipcoin/ovg-chain v1.0.7 h1:CI5rmpZyS1xWcc3206khTwXzZpa/IfVqevbe/ijVWTM=
+git.ooo.ua/vipcoin/ovg-chain v1.0.7/go.mod h1:43wl38IVkBVf/5mINj/ZO6JpG1zKyoQBn69Vmjp94Ig=
 github.com/4meepo/tagalign v1.3.3 h1:ZsOxcwGD/jP4U/aw7qeWu58i7dwYemfy5Y+IF1ACoNw=
 github.com/4meepo/tagalign v1.3.3/go.mod h1:Q9c1rYMZJc9dPRkbQPpcBNCLEmY2njbAsXhQOZFE2dE=
 github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 h1:/vQbFIOMbk2FiG/kXiLl8BRyzTWDw7gX/Hz7Dd5eDMs=

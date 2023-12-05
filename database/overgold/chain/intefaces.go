@@ -63,6 +63,12 @@ type (
 
 		GetAllMsgSellCancel(filter filter.Filter) ([]stake.MsgMsgCancelSell, error)
 		InsertMsgSellCancel(hash string, msgs ...stake.MsgMsgCancelSell) error
+
+		GetAllMsgClaimReward(filter filter.Filter) ([]stake.MsgClaimReward, error)
+		InsertMsgClaimReward(hash string, msgs ...stake.MsgClaimReward) error
+
+		GetAllMsgDistributeRewards(filter filter.Filter) ([]stake.MsgDistributeRewards, error)
+		InsertMsgDistributeRewards(hash string, msgs ...stake.MsgDistributeRewards) error
 	}
 )
 

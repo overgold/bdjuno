@@ -13,7 +13,7 @@ import (
 )
 
 // handleMsgSellCancel allows to properly handle a stake sell cancel message
-func (m *Module) handleMsgSellCancel(tx *juno.Tx, index int, msg *types.MsgMsgCancelSell) error {
+func (m *Module) handleMsgSellCancel(tx *juno.Tx, _ int, msg *types.MsgMsgCancelSell) error {
 	msgs, err := m.stakeRepo.GetAllMsgSellCancel(filter.NewFilter().SetCondition(filter.ConditionAND).
 		SetArgument(db.FieldTxHash, tx.TxHash).
 		SetArgument(db.FieldCreator, msg.Creator))

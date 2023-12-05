@@ -13,7 +13,7 @@ import (
 )
 
 // handleMsgBuy allows to properly handle a stake buy message
-func (m *Module) handleMsgBuy(tx *juno.Tx, index int, msg *types.MsgBuyRequest) error {
+func (m *Module) handleMsgBuy(tx *juno.Tx, _ int, msg *types.MsgBuyRequest) error {
 	msgs, err := m.stakeRepo.GetAllMsgBuy(filter.NewFilter().SetCondition(filter.ConditionAND).
 		SetArgument(db.FieldTxHash, tx.TxHash).
 		SetArgument(db.FieldCreator, msg.Creator))

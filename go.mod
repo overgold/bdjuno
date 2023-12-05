@@ -8,7 +8,7 @@ require (
 	git.ooo.ua/vipcoin/lib/errs v1.0.7
 	git.ooo.ua/vipcoin/lib/filter v1.0.20
 	git.ooo.ua/vipcoin/lib/vault v1.0.7
-	git.ooo.ua/vipcoin/ovg-chain v1.0.6
+	git.ooo.ua/vipcoin/ovg-chain v1.0.7
 	github.com/cometbft/cometbft v0.37.2
 	github.com/cosmos/cosmos-sdk v0.47.5
 	github.com/cosmos/gogoproto v1.4.10
