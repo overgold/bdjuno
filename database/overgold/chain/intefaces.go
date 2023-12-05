@@ -4,6 +4,7 @@ import (
 	"git.ooo.ua/vipcoin/lib/filter"
 	allowed "git.ooo.ua/vipcoin/ovg-chain/x/allowed/types"
 	core "git.ooo.ua/vipcoin/ovg-chain/x/core/types"
+	referral "git.ooo.ua/vipcoin/ovg-chain/x/referral/types"
 	stake "git.ooo.ua/vipcoin/ovg-chain/x/stake/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/types"
 )
@@ -50,7 +51,8 @@ type (
 
 	// Referral - describes an interface for working with database models.
 	Referral interface {
-		// TODO
+		GetAllMsgSetReferrer(filter filter.Filter) ([]referral.MsgSetReferrer, error)
+		InsertMsgSetReferrer(hash string, msgs ...referral.MsgSetReferrer) error
 	}
 
 	// Stake - describes an interface for working with database models.

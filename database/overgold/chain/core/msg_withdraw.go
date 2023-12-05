@@ -31,7 +31,7 @@ func (r Repository) GetAllMsgWithdraw(filter filter.Filter) ([]core.MsgWithdraw,
 	return toMsgWithdrawDomainList(result), nil
 }
 
-// InsertMsgWithdraw - insert a new MsgCreateAddresses in a database (overgold_core_withdraw).
+// InsertMsgWithdraw - insert a new MsgWithdraw in a database (overgold_core_withdraw).
 func (r Repository) InsertMsgWithdraw(hash string, msgs ...core.MsgWithdraw) error {
 	if len(msgs) == 0 || hash == "" {
 		return nil

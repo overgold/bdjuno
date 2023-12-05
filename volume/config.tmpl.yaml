@@ -11,6 +11,7 @@ chain:
         - slashing
         - staking
         - actions
+        - overgold
 
 node:
     type: remote

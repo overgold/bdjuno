@@ -31,7 +31,7 @@ func (r Repository) GetAllMsgIssue(filter filter.Filter) ([]core.MsgIssue, error
 	return toMsgIssueDomainList(result), nil
 }
 
-// InsertMsgIssue - insert a new MsgCreateAddresses in a database (overgold_core_issue).
+// InsertMsgIssue - insert a new MsgIssue in a database (overgold_core_issue).
 func (r Repository) InsertMsgIssue(hash string, msgs ...core.MsgIssue) error {
 	if len(msgs) == 0 || hash == "" {
 		return nil

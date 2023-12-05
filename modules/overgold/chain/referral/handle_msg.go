@@ -1,6 +1,8 @@
 package referral
 
 import (
+	"fmt"
+
 	"git.ooo.ua/vipcoin/ovg-chain/x/referral/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/forbole/juno/v5/types"
@@ -12,11 +14,10 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return nil
 	}
 
-	// switch referralMsg := msg.(type) {
-	switch msg.(type) {
+	switch referralMsg := msg.(type) {
 	case *types.MsgSetReferrer:
-		return nil
+		return m.handleMsgSetReferrer(tx, index, referralMsg)
 	default:
-		return nil
+		return fmt.Errorf("unrecognized %s message type: %T", m.Name(), referralMsg)
 	}
 }
