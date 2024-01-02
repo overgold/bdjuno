@@ -10,7 +10,7 @@ import (
 	"github.com/forbole/bdjuno/v4/database/types"
 )
 
-// DONE TEST
+// TEST: DONE
 // NOTE: add entity's in other tables before testing (tariff, fees)
 
 func TestRepository_InsertToM2MTariffFees(t *testing.T) {

@@ -22,7 +22,8 @@ CREATE TABLE overgold_feeexcluder_stats (
 );
 
 CREATE TABLE overgold_feeexcluder_fees ( 
-    id              BIGINT      NOT NULL PRIMARY KEY,
+    id              BIGSERIAL   NOT NULL PRIMARY KEY,
+    msg_id          BIGINT,
     creator         TEXT        NOT NULL,
     amount_from     BIGSERIAL   NOT NULL,
     fee             NUMERIC     NOT NULL,
@@ -32,16 +33,17 @@ CREATE TABLE overgold_feeexcluder_fees (
     no_ref_reward   BOOLEAN     NOT NULL
 );
 
-CREATE TABLE overgold_feeexcluder_tariff ( 
-    id              BIGINT      NOT NULL PRIMARY KEY,
+CREATE TABLE overgold_feeexcluder_tariff (
+    id              BIGSERIAL   NOT NULL PRIMARY KEY,
+    msg_id          BIGINT,
     amount          BIGSERIAL   NOT NULL,
     denom           TEXT        NOT NULL,
     min_ref_balance BIGSERIAL   NOT NULL
 );
 
 CREATE TABLE overgold_feeexcluder_m2m_tariff_fees (
-    tariff_id BIGINT REFERENCES overgold_feeexcluder_tariff(id),
-    fees_id   BIGINT REFERENCES overgold_feeexcluder_fees(id),
+    tariff_id BIGSERIAL REFERENCES overgold_feeexcluder_tariff(id),
+    fees_id   BIGSERIAL REFERENCES overgold_feeexcluder_fees(id),
     PRIMARY KEY (tariff_id, fees_id)
 );
 

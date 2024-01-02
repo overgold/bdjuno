@@ -253,7 +253,7 @@ func (r Repository) UpdateGenesisState(genesisStateID uint64, gs fe.GenesisState
 	}
 
 	for _, id := range types.GetDailyStatsIDs(stats) {
-		if err = r.UpdateDailyStats(tx, id, gs.DailyStatsList...); err != nil {
+		if err = r.UpdateDailyStats(tx, id, gs.DailyStatsList[0]); err != nil { // TODO: dont't use it (testing)
 			return err
 		}
 	}
@@ -273,7 +273,7 @@ func (r Repository) UpdateGenesisState(genesisStateID uint64, gs fe.GenesisState
 	}
 
 	for _, id := range types.GetTariffsIDs(tariffs) {
-		if err = r.UpdateTariffs(tx, id, gs.TariffsList...); err != nil {
+		if err = r.UpdateTariffs(tx, id, gs.TariffsList[0]); err != nil { // TODO: dont't use it (testing)
 			return err
 		}
 	}

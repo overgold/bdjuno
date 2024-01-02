@@ -10,7 +10,7 @@ import (
 	d "github.com/forbole/bdjuno/v4/_tests/database"
 )
 
-// DONE TEST
+// TEST: DONE
 
 func TestRepository_InsertToDailyStats(t *testing.T) {
 	type args struct {
@@ -113,8 +113,10 @@ func TestRepository_UpdateDailyStats(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.UpdateDailyStats(nil, tt.args.id, tt.args.msg...); (err != nil) != tt.wantErr {
-				t.Errorf("UpdateDailyStats() error = %v, wantErr %v", err, tt.wantErr)
+			for _, msg := range tt.args.msg {
+				if err := d.Datastore.FeeExluder.UpdateDailyStats(nil, tt.args.id, msg); (err != nil) != tt.wantErr {
+					t.Errorf("UpdateDailyStats() error = %v, wantErr %v", err, tt.wantErr)
+				}
 			}
 		})
 	}

@@ -10,7 +10,7 @@ import (
 	d "github.com/forbole/bdjuno/v4/_tests/database"
 )
 
-// DONE TEST
+// TEST: DONE
 
 func TestRepository_InsertToFees(t *testing.T) {
 	type args struct {
@@ -91,6 +91,7 @@ func TestRepository_GetAllFees(t *testing.T) {
 func TestRepository_UpdateFees(t *testing.T) {
 	type args struct {
 		msg  []*fe.Fees
+		id   uint64
 		hash string
 	}
 	tests := []struct {
@@ -123,14 +124,17 @@ func TestRepository_UpdateFees(t *testing.T) {
 						Id:          1,
 					},
 				},
+				id:   1,
 				hash: gofakeit.LetterN(64),
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.UpdateFees(nil, tt.args.msg...); (err != nil) != tt.wantErr {
-				t.Errorf("UpdateFees() error = %v, wantErr %v", err, tt.wantErr)
+			for _, msg := range tt.args.msg {
+				if err := d.Datastore.FeeExluder.UpdateFees(nil, tt.args.id, msg); (err != nil) != tt.wantErr {
+					t.Errorf("UpdateFees() error = %v, wantErr %v", err, tt.wantErr)
+				}
 			}
 		})
 	}

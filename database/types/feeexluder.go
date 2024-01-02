@@ -36,7 +36,8 @@ type (
 	// FeeExcluderFees represents a single row inside the overgold_feeexcluder_fees
 	FeeExcluderFees struct {
 		NoRefReward bool            `db:"no_ref_reward"`
-		ID          uint64          `db:"id"`
+		ID          uint64          `db:"id"`     // unique id as primary key
+		MsgID       uint64          `db:"msg_id"` // fees id from message
 		MinAmount   uint64          `db:"min_amount"`
 		AmountFrom  uint64          `db:"amount_from"`
 		Fee         decimal.Decimal `db:"fee"`
@@ -47,7 +48,8 @@ type (
 
 	// FeeExcluderTariff represents a single row inside the overgold_feeexcluder_tariff
 	FeeExcluderTariff struct {
-		ID            uint64 `db:"id"`
+		ID            uint64 `db:"id"`     // unique id as primary key
+		MsgID         uint64 `db:"msg_id"` // tariff id from message
 		Amount        uint64 `db:"amount"`
 		MinRefBalance uint64 `db:"min_ref_balance"`
 		Denom         string `db:"denom"`
@@ -61,7 +63,7 @@ type (
 
 	// FeeExcluderTariffs represents a single row inside the overgold_feeexcluder_tariffs
 	FeeExcluderTariffs struct {
-		ID      uint64 `db:"id"`
+		ID      uint64 `db:"id"` // unique id as primary key
 		Denom   string `db:"denom"`
 		Creator string `db:"creator"`
 	}

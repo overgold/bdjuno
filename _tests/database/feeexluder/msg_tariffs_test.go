@@ -9,7 +9,7 @@ import (
 	d "github.com/forbole/bdjuno/v4/_tests/database"
 )
 
-// ERROR: insert or update on table "overgold_feeexcluder_m2m_tariff_tariffs" violates foreign key constraint "overgold_feeexcluder_m2m_tariff_tariffs_tariffs_id_fkey"
+// TEST: DONE
 
 func TestRepository_InsertToTariffs(t *testing.T) {
 	type args struct {
@@ -28,24 +28,6 @@ func TestRepository_InsertToTariffs(t *testing.T) {
 						Denom: "ovg",
 						Tariffs: []*fe.Tariff{
 							{
-								Id:            1,
-								Amount:        "100000000000",
-								Denom:         "stovg",
-								MinRefBalance: "10000000000",
-								Fees: []*fe.Fees{
-									{
-										AmountFrom:  "1000000",
-										Fee:         "0.001",
-										RefReward:   "0.25",
-										StakeReward: "0.5",
-										MinAmount:   1000,
-										NoRefReward: true,
-										Creator:     d.TestAddressCreator,
-										Id:          0,
-									},
-								},
-							},
-							{
 								Id:            0,
 								Amount:        "0",
 								Denom:         "stovg",
@@ -60,6 +42,24 @@ func TestRepository_InsertToTariffs(t *testing.T) {
 										NoRefReward: true,
 										Creator:     d.TestAddressCreator,
 										Id:          1,
+									},
+								},
+							},
+							{
+								Id:            1,
+								Amount:        "100000000000",
+								Denom:         "stovg",
+								MinRefBalance: "10000000000",
+								Fees: []*fe.Fees{
+									{
+										AmountFrom:  "1000000",
+										Fee:         "0.001",
+										RefReward:   "0.25",
+										StakeReward: "0.5",
+										MinAmount:   1000,
+										NoRefReward: true,
+										Creator:     d.TestAddressCreator,
+										Id:          0,
 									},
 								},
 							},
@@ -112,7 +112,7 @@ func TestRepository_GetAllTariffs(t *testing.T) {
 
 func TestRepository_UpdateTariffs(t *testing.T) {
 	type args struct {
-		msg []fe.Tariffs
+		msg fe.Tariffs
 		id  uint64
 	}
 	tests := []struct {
@@ -123,56 +123,56 @@ func TestRepository_UpdateTariffs(t *testing.T) {
 		{
 			name: "[success] UpdateTariffs stovg -> ovg",
 			args: args{
-				msg: []fe.Tariffs{
-					{
-						Denom: "ovg",
-						Tariffs: []*fe.Tariff{
-							{
-								Id:            1,
-								Amount:        "100000000000",
-								Denom:         "ovg",
-								MinRefBalance: "10000000000",
-								Fees: []*fe.Fees{
-									{
-										AmountFrom:  "1000000",
-										Fee:         "0.001",
-										RefReward:   "0.25",
-										StakeReward: "0.5",
-										MinAmount:   1000,
-										NoRefReward: true,
-										Creator:     d.TestAddressCreator,
-										Id:          0,
-									},
-								},
-							},
-							{
-								Id:            0,
-								Amount:        "0",
-								Denom:         "ovg",
-								MinRefBalance: "10000000000",
-								Fees: []*fe.Fees{
-									{
-										AmountFrom:  "50000000",
-										Fee:         "0.05",
-										RefReward:   "0.25",
-										StakeReward: "0.5",
-										MinAmount:   100000,
-										NoRefReward: true,
-										Creator:     d.TestAddressCreator,
-										Id:          1,
-									},
+				msg: fe.Tariffs{
+					Denom: "ovg",
+					Tariffs: []*fe.Tariff{
+						{
+							Id:            1,
+							Amount:        "100000000000",
+							Denom:         "ovg",
+							MinRefBalance: "10000000000",
+							Fees: []*fe.Fees{
+								{
+									AmountFrom:  "1000000",
+									Fee:         "0.001",
+									RefReward:   "0.25",
+									StakeReward: "0.5",
+									MinAmount:   1000,
+									NoRefReward: true,
+									Creator:     d.TestAddressCreator,
+									Id:          0,
 								},
 							},
 						},
-						Creator: d.TestAddressCreator,
+						{
+							Id:            0,
+							Amount:        "0",
+							Denom:         "ovg",
+							MinRefBalance: "10000000000",
+							Fees: []*fe.Fees{
+								{
+									AmountFrom:  "50000000",
+									Fee:         "0.05",
+									RefReward:   "0.25",
+									StakeReward: "0.5",
+									MinAmount:   100000,
+									NoRefReward: true,
+									Creator:     d.TestAddressCreator,
+									Id:          1,
+								},
+							},
+						},
 					},
+					Creator: d.TestAddressCreator,
 				},
+				id: 1,
 			},
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.UpdateTariffs(nil, tt.args.id, tt.args.msg...); (err != nil) != tt.wantErr {
+			if err := d.Datastore.FeeExluder.UpdateTariffs(nil, tt.args.id, tt.args.msg); (err != nil) != tt.wantErr {
 				t.Errorf("UpdateTariffs() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

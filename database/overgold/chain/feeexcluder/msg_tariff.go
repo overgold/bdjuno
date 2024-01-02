@@ -76,34 +76,38 @@ func (r Repository) InsertToTariff(tx *sqlx.Tx, tariff *fe.Tariff) (lastID uint6
 	// 1) add tariff
 	q := `
 		INSERT INTO overgold_feeexcluder_tariff (
-			id, amount, denom, min_ref_balance
+			msg_id, amount, denom, min_ref_balance
 		) VALUES (
 			$1, $2, $3, $4
 		) RETURNING id
 	`
 
-	m, err := toTariffDatabase(tariff)
+	m, err := toTariffDatabase(0, tariff)
 	if err != nil {
 		return 0, errs.Internal{Cause: err.Error()}
 	}
 
-	if err = tx.QueryRowx(q, m.ID, m.Amount, m.Denom, m.MinRefBalance).Scan(&lastID); err != nil {
+	if err = tx.QueryRowx(q, m.MsgID, m.Amount, m.Denom, m.MinRefBalance).Scan(&lastID); err != nil {
 		return 0, errs.Internal{Cause: err.Error()}
 	}
 
-	// 2) add fees
+	// 2) add fees and save unique ids
+	feesIDs := make([]uint64, 0, len(tariff.Fees))
 	for _, f := range tariff.Fees {
-		if _, err = r.InsertToFees(tx, f); err != nil {
+		id, err := r.InsertToFees(tx, f)
+		if err != nil {
 			return 0, err
 		}
+
+		feesIDs = append(feesIDs, id)
 	}
 
 	// 3) add many-to-many tariff fees
 	m2m := make([]types.FeeExcluderM2MTariffFees, 0, len(tariff.Fees))
-	for _, f := range tariff.Fees {
+	for _, id := range feesIDs {
 		m2m = append(m2m, types.FeeExcluderM2MTariffFees{
-			TariffID: tariff.Id,
-			FeesID:   f.Id,
+			TariffID: lastID,
+			FeesID:   id,
 		})
 	}
 
@@ -111,11 +115,8 @@ func (r Repository) InsertToTariff(tx *sqlx.Tx, tariff *fe.Tariff) (lastID uint6
 }
 
 // UpdateTariff - method that updates in a database (overgold_feeexcluder_tariff).
-func (r Repository) UpdateTariff(tx *sqlx.Tx, tariffList ...*fe.Tariff) (err error) {
-	if len(tariffList) == 0 {
-		return nil
-	}
-
+// TODO: refactor unique fee primary key
+func (r Repository) UpdateTariff(tx *sqlx.Tx, id uint64, tariff *fe.Tariff) (err error) {
 	if tx == nil {
 		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 		if err != nil {
@@ -127,26 +128,45 @@ func (r Repository) UpdateTariff(tx *sqlx.Tx, tariffList ...*fe.Tariff) (err err
 
 	// 1) update tariff
 	q := `UPDATE overgold_feeexcluder_tariff SET
-				 amount = $1,
-				 denom = $2,
-				 min_ref_balance = $3
-			 WHERE id = $4`
+                 msg_id = $1,
+				 amount = $2,
+				 denom = $3,
+				 min_ref_balance = $4
+			 WHERE id = $5`
 
-	for _, t := range tariffList {
-		m, err := toTariffDatabase(t)
-		if err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
-
-		if _, err = tx.Exec(q, m.Amount, m.Denom, m.MinRefBalance, m.ID); err != nil {
-			return err
-		}
+	m, err := toTariffDatabase(id, tariff)
+	if err != nil {
+		return errs.Internal{Cause: err.Error()}
 	}
 
-	// 2) update fees
-	for _, t := range tariffList {
-		if err = r.UpdateFees(tx, t.Fees...); err != nil {
-			return err
+	if _, err = tx.Exec(q, m.MsgID, m.Amount, m.Denom, m.MinRefBalance, m.ID); err != nil {
+		return err
+	}
+
+	// 2) get fees ids (only custom unique primary key)
+	m2mFees, err := r.GetAllM2MTariffFees(filter.NewFilter().SetArgument(types.FieldTariffID, id))
+	if err != nil {
+		return err
+	}
+
+	feesIDs := make([]uint64, 0, len(m2mFees))
+	for _, m2m := range m2mFees {
+		feesIDs = append(feesIDs, m2m.FeesID)
+	}
+
+	fees, err := r.getAllFeesWithUniqueID(filter.NewFilter().SetArgument(types.FieldID, feesIDs))
+	if err != nil {
+		return err
+	}
+
+	// 3) update fees
+	for _, f := range fees {
+		for _, msgFee := range tariff.Fees {
+			if f.MsgID == msgFee.Id {
+				if err = r.UpdateFees(tx, f.ID, msgFee); err != nil {
+					return err
+				}
+			}
 		}
 	}
 
@@ -191,4 +211,23 @@ func (r Repository) DeleteTariff(tx *sqlx.Tx, id uint64) (err error) {
 	}
 
 	return nil
+}
+
+// getAllTariffWithUniqueID - method that get data from a db (overgold_feeexcluder_tariffs).
+func (r Repository) getAllTariffWithUniqueID(f filter.Filter) ([]types.FeeExcluderTariff, error) {
+	q, args := f.Build(tableTariff)
+
+	var tariff []types.FeeExcluderTariff
+	if err := r.db.Select(&tariff, q, args...); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, errs.NotFound{What: tableTariff}
+		}
+
+		return nil, errs.Internal{Cause: err.Error()}
+	}
+	if len(tariff) == 0 {
+		return nil, errs.NotFound{What: tableTariff}
+	}
+
+	return tariff, nil
 }

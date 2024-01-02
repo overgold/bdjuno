@@ -10,7 +10,7 @@ import (
 	d "github.com/forbole/bdjuno/v4/_tests/database"
 )
 
-// DONE TEST
+// TEST: DONE
 
 func TestRepository_InsertToStats(t *testing.T) {
 	type args struct {
@@ -144,7 +144,7 @@ func TestRepository_DeleteStats(t *testing.T) {
 		{
 			name: "[success] DeleteStats",
 			args: args{
-				id: "1",
+				id: "2",
 			},
 		},
 	}

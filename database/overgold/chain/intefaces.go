@@ -55,8 +55,8 @@ type (
 
 		DeleteMsgCreateAddress(id uint64) error
 		GetAllMsgCreateAddress(filter filter.Filter) ([]fe.MsgCreateAddress, error)
-		InsertToMsgCreateAddress(hash string, addresses ...fe.MsgCreateAddress) error
-		UpdateMsgCreateAddress(hash string, id uint64, addresses ...fe.MsgCreateAddress) error
+		InsertToMsgCreateAddress(hash string, address fe.MsgCreateAddress) error
+		UpdateMsgCreateAddress(hash string, id uint64, address fe.MsgCreateAddress) error
 
 		DeleteMsgUpdateAddress(id uint64) error
 		GetAllMsgUpdateAddress(filter filter.Filter) ([]fe.MsgUpdateAddress, error)
@@ -70,18 +70,18 @@ type (
 
 		DeleteMsgCreateTariffs(id uint64) error
 		GetAllMsgCreateTariffs(f filter.Filter) ([]fe.MsgCreateTariffs, error)
-		InsertToMsgCreateTariffs(hash string, ct ...fe.MsgCreateTariffs) error
-		UpdateMsgCreateTariffs(hash string, id uint64, ct ...fe.MsgCreateTariffs) error
+		InsertToMsgCreateTariffs(hash string, ct fe.MsgCreateTariffs) error
+		UpdateMsgCreateTariffs(hash string, id uint64, ct fe.MsgCreateTariffs) error
 
 		DeleteMsgUpdateTariffs(id uint64) error
 		GetAllMsgUpdateTariffs(f filter.Filter) ([]fe.MsgUpdateTariffs, error)
-		InsertToMsgUpdateTariffs(hash string, ut ...fe.MsgUpdateTariffs) error
-		UpdateMsgUpdateTariffs(hash string, id uint64, ut ...fe.MsgUpdateTariffs) error
+		InsertToMsgUpdateTariffs(hash string, ut fe.MsgUpdateTariffs) error
+		UpdateMsgUpdateTariffs(hash string, id uint64, ut fe.MsgUpdateTariffs) error
 
 		DeleteMsgDeleteTariffs(id uint64) error
 		GetAllMsgDeleteTariffs(f filter.Filter) ([]fe.MsgDeleteTariffs, error)
 		InsertToMsgDeleteTariffs(hash string, dt ...fe.MsgDeleteTariffs) error
-		UpdateMsgDeleteTariffs(hash string, id uint64, ut ...fe.MsgDeleteTariffs) error
+		UpdateMsgDeleteTariffs(hash string, id uint64, ut fe.MsgDeleteTariffs) error
 
 		DeleteGenesisState(id uint64) error
 		GetAllGenesisState(filter filter.Filter) ([]fe.GenesisState, error)
@@ -98,7 +98,7 @@ type (
 		DeleteFees(tx *sqlx.Tx, id uint64) error
 		GetAllFees(filter filter.Filter) ([]*fe.Fees, error)
 		InsertToFees(tx *sqlx.Tx, fees *fe.Fees) (uint64, error)
-		UpdateFees(tx *sqlx.Tx, fees ...*fe.Fees) error
+		UpdateFees(tx *sqlx.Tx, id uint64, fees *fe.Fees) error
 
 		DeleteStats(tx *sqlx.Tx, id string) error
 		GetAllStats(filter filter.Filter) ([]fe.Stats, error)
@@ -108,17 +108,17 @@ type (
 		DeleteDailyStats(tx *sqlx.Tx, id uint64) error
 		GetAllDailyStats(f filter.Filter) ([]fe.DailyStats, error)
 		InsertToDailyStats(tx *sqlx.Tx, dailyStats fe.DailyStats) (uint64, error)
-		UpdateDailyStats(tx *sqlx.Tx, id uint64, ut ...fe.DailyStats) error
+		UpdateDailyStats(tx *sqlx.Tx, id uint64, ut fe.DailyStats) error
 
 		DeleteTariff(tx *sqlx.Tx, id uint64) error
 		GetAllTariff(f filter.Filter) ([]*fe.Tariff, error)
 		InsertToTariff(tx *sqlx.Tx, tariff *fe.Tariff) (uint64, error)
-		UpdateTariff(tx *sqlx.Tx, tariff ...*fe.Tariff) error
+		UpdateTariff(tx *sqlx.Tx, id uint64, tariff *fe.Tariff) error
 
 		DeleteTariffs(tx *sqlx.Tx, id uint64) error
 		GetAllTariffs(f filter.Filter) ([]fe.Tariffs, error)
 		InsertToTariffs(tx *sqlx.Tx, tariffs fe.Tariffs) (uint64, error)
-		UpdateTariffs(tx *sqlx.Tx, id uint64, tariffs ...fe.Tariffs) error
+		UpdateTariffs(tx *sqlx.Tx, id uint64, tariffs fe.Tariffs) error
 	}
 
 	FeeExcluderM2MTables interface {

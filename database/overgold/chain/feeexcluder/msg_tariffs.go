@@ -76,42 +76,36 @@ func (r Repository) InsertToTariffs(tx *sqlx.Tx, tariffs fe.Tariffs) (lastID uin
 		) RETURNING id
 	`
 
-	tariffsMap := make(map[uint64]fe.Tariffs)
-
 	m := toTariffsDatabase(0, tariffs)
 	if err = tx.QueryRowx(q, m.Denom, m.Creator).Scan(&lastID); err != nil {
 		return 0, errs.Internal{Cause: err.Error()}
 	}
 
-	tariffsMap[m.ID] = tariffs
-
-	// 2) add tariff
+	// 2) add tariff and save unique ids
+	tariffIDs := make([]uint64, 0, len(tariffs.Tariffs))
 	for _, t := range tariffs.Tariffs {
-		if _, err = r.InsertToTariff(tx, t); err != nil {
+		id, err := r.InsertToTariff(tx, t)
+		if err != nil {
 			return 0, err
 		}
+
+		tariffIDs = append(tariffIDs, id)
 	}
 
 	// 3) add many-to-many tariff tariffs
-	m2m := make([]types.FeeExcluderM2MTariffTariffs, 0, len(tariffsMap))
-	for id, t := range tariffsMap {
-		for _, tariff := range t.Tariffs {
-			m2m = append(m2m, types.FeeExcluderM2MTariffTariffs{
-				TariffID:  tariff.Id,
-				TariffsID: id,
-			})
-		}
+	m2m := make([]types.FeeExcluderM2MTariffTariffs, 0, len(tariffs.Tariffs))
+	for _, id := range tariffIDs {
+		m2m = append(m2m, types.FeeExcluderM2MTariffTariffs{
+			TariffsID: lastID,
+			TariffID:  id,
+		})
 	}
 
 	return lastID, r.InsertToM2MTariffTariffs(tx, m2m...)
 }
 
 // UpdateTariffs - method that updates in a database (overgold_feeexcluder_tariffs).
-func (r Repository) UpdateTariffs(tx *sqlx.Tx, id uint64, tariffsList ...fe.Tariffs) (err error) {
-	if len(tariffsList) == 0 {
-		return nil
-	}
-
+func (r Repository) UpdateTariffs(tx *sqlx.Tx, id uint64, tariffs fe.Tariffs) (err error) {
 	if tx == nil {
 		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 		if err != nil {
@@ -127,17 +121,32 @@ func (r Repository) UpdateTariffs(tx *sqlx.Tx, id uint64, tariffsList ...fe.Tari
 				 creator = $2
 			 WHERE id = $3`
 
-	for _, t := range tariffsList {
-		m := toTariffsDatabase(id, t)
-		if _, err = tx.Exec(q, m.Denom, m.Creator, m.ID); err != nil {
-			return err
-		}
+	m := toTariffsDatabase(id, tariffs)
+	if _, err = tx.Exec(q, m.Denom, m.Creator, m.ID); err != nil {
+		return err
 	}
 
-	// 2) update tariff
-	for _, t := range tariffsList {
-		if err = r.UpdateTariff(tx, t.Tariffs...); err != nil {
-			return err
+	// 2) get unique id from many-to-many tariff tariffs
+	m2m, err := r.GetAllM2MTariffTariffs(filter.NewFilter().SetArgument(types.FieldTariffsID, id))
+	if err != nil {
+		return err
+	}
+	tariffIDs := make([]uint64, 0, len(m2m))
+	for _, tariffs := range m2m {
+		tariffIDs = append(tariffIDs, tariffs.TariffID)
+	}
+
+	tariffList, err := r.getAllTariffsWithUniqueID(filter.NewFilter().SetArgument(types.FieldID, tariffIDs))
+	if err != nil {
+		return err
+	}
+
+	// 3) update tariff
+	for _, t := range tariffList {
+		for _, ts := range tariffs.Tariffs {
+			if err = r.UpdateTariff(tx, t.ID, ts); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -182,4 +191,23 @@ func (r Repository) DeleteTariffs(tx *sqlx.Tx, id uint64) (err error) {
 	}
 
 	return nil
+}
+
+// getAllTariffsWithUniqueID - method that get data from a db (overgold_feeexcluder_tariffs).
+func (r Repository) getAllTariffsWithUniqueID(f filter.Filter) ([]types.FeeExcluderTariffs, error) {
+	q, args := f.Build(tableTariffs)
+
+	var tariffs []types.FeeExcluderTariffs
+	if err := r.db.Select(&tariffs, q, args...); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, errs.NotFound{What: tableTariffs}
+		}
+
+		return nil, errs.Internal{Cause: err.Error()}
+	}
+	if len(tariffs) == 0 {
+		return nil, errs.NotFound{What: tableTariffs}
+	}
+
+	return tariffs, nil
 }

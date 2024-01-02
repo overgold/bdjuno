@@ -45,19 +45,19 @@ func (r Repository) InsertToFees(tx *sqlx.Tx, fees *fe.Fees) (lastID uint64, err
 
 	q := `
 		INSERT INTO overgold_feeexcluder_fees (
-			id, creator, amount_from, fee, ref_reward, stake_reward, min_amount, no_ref_reward
+			msg_id, creator, amount_from, fee, ref_reward, stake_reward, min_amount, no_ref_reward
 		) VALUES (
 			$1, $2, $3, $4, $5, $6, $7, $8
 		) RETURNING id
 	`
 
-	m, err := toFeesDatabase(fees)
+	m, err := toFeesDatabase(0, fees)
 	if err != nil {
 		return 0, errs.Internal{Cause: err.Error()}
 	}
 
 	if err = tx.QueryRowx(q,
-		m.ID,
+		m.MsgID,
 		m.Creator,
 		m.AmountFrom,
 		m.Fee,
@@ -73,11 +73,7 @@ func (r Repository) InsertToFees(tx *sqlx.Tx, fees *fe.Fees) (lastID uint64, err
 }
 
 // UpdateFees - method that updates in a database (overgold_feeexcluder_fees).
-func (r Repository) UpdateFees(tx *sqlx.Tx, feesList ...*fe.Fees) (err error) {
-	if len(feesList) == 0 {
-		return nil
-	}
-
+func (r Repository) UpdateFees(tx *sqlx.Tx, id uint64, fees *fe.Fees) (err error) {
 	if tx == nil {
 		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 		if err != nil {
@@ -88,33 +84,33 @@ func (r Repository) UpdateFees(tx *sqlx.Tx, feesList ...*fe.Fees) (err error) {
 	}
 
 	q := `UPDATE overgold_feeexcluder_fees SET
-				 creator = $1,
-				 amount_from = $2, 
-				 fee = $3, 
-				 ref_reward = $4, 
-				 stake_reward = $5, 
-				 min_amount = $6, 
-				 no_ref_reward = $7
-			 WHERE id = $8`
+                 msg_id = $1,
+				 creator = $2,
+				 amount_from = $3, 
+				 fee = $4, 
+				 ref_reward = $5, 
+				 stake_reward = $6, 
+				 min_amount = $7, 
+				 no_ref_reward = $8
+			 WHERE id = $9`
 
-	for _, fees := range feesList {
-		m, err := toFeesDatabase(fees)
-		if err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
+	m, err := toFeesDatabase(id, fees)
+	if err != nil {
+		return errs.Internal{Cause: err.Error()}
+	}
 
-		if _, err = tx.Exec(q,
-			m.Creator,
-			m.AmountFrom,
-			m.Fee,
-			m.RefReward,
-			m.StakeReward,
-			m.MinAmount,
-			m.NoRefReward,
-			m.ID,
-		); err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
+	if _, err = tx.Exec(q,
+		m.MsgID,
+		m.Creator,
+		m.AmountFrom,
+		m.Fee,
+		m.RefReward,
+		m.StakeReward,
+		m.MinAmount,
+		m.NoRefReward,
+		m.ID,
+	); err != nil {
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -138,4 +134,23 @@ func (r Repository) DeleteFees(tx *sqlx.Tx, id uint64) (err error) {
 	}
 
 	return nil
+}
+
+// getAllFeesWithUniqueID - method that get data from a db (overgold_feeexcluder_tariffs).
+func (r Repository) getAllFeesWithUniqueID(f filter.Filter) ([]types.FeeExcluderFees, error) {
+	q, args := f.Build(tableFees)
+
+	var fees []types.FeeExcluderFees
+	if err := r.db.Select(&fees, q, args...); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, errs.NotFound{What: tableFees}
+		}
+
+		return nil, errs.Internal{Cause: err.Error()}
+	}
+	if len(fees) == 0 {
+		return nil, errs.NotFound{What: tableFees}
+	}
+
+	return fees, nil
 }

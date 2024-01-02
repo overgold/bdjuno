@@ -79,7 +79,7 @@ func (r Repository) InsertToStats(tx *sqlx.Tx, stats fe.Stats) (lastID string, e
 		return "", errs.Internal{Cause: err.Error()}
 	}
 
-	if err = r.db.QueryRowx(q, m.ID, m.Date, m.DailyStatsID).Scan(&lastID); err != nil {
+	if err = tx.QueryRowx(q, m.ID, m.Date, m.DailyStatsID).Scan(&lastID); err != nil {
 		return "", errs.Internal{Cause: err.Error()}
 	}
 

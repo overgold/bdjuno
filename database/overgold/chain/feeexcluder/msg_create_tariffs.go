@@ -48,11 +48,7 @@ func (r Repository) GetAllMsgCreateTariffs(f filter.Filter) ([]fe.MsgCreateTarif
 }
 
 // InsertToMsgCreateTariffs - insert new data in a database (overgold_feeexcluder_create_tariffs).
-func (r Repository) InsertToMsgCreateTariffs(hash string, ct ...fe.MsgCreateTariffs) error {
-	if len(ct) == 0 {
-		return nil
-	}
-
+func (r Repository) InsertToMsgCreateTariffs(hash string, ct fe.MsgCreateTariffs) error {
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
 		return errs.Internal{Cause: err.Error()}
@@ -63,10 +59,9 @@ func (r Repository) InsertToMsgCreateTariffs(hash string, ct ...fe.MsgCreateTari
 	}()
 
 	// 1) add tariff
-	for _, t := range ct {
-		if _, err = r.InsertToTariff(tx, t.Tariff); err != nil {
-			return err
-		}
+	tariffID, err := r.InsertToTariff(tx, ct.Tariff)
+	if err != nil {
+		return err
 	}
 
 	// 2) add create tariffs
@@ -79,11 +74,9 @@ func (r Repository) InsertToMsgCreateTariffs(hash string, ct ...fe.MsgCreateTari
 			id, tx_hash, creator, denom, tariff_id
 	`
 
-	for _, t := range ct {
-		m := toMsgCreateTariffsDatabase(hash, 0, t)
-		if _, err = tx.Exec(q, m.TxHash, m.Creator, m.Denom, m.TariffID); err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
+	m := toMsgCreateTariffsDatabase(hash, 0, tariffID, ct)
+	if _, err = tx.Exec(q, m.TxHash, m.Creator, m.Denom, m.TariffID); err != nil {
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	if err = tx.Commit(); err != nil {
@@ -93,22 +86,27 @@ func (r Repository) InsertToMsgCreateTariffs(hash string, ct ...fe.MsgCreateTari
 	return nil
 }
 
+// / TODO
 // UpdateMsgCreateTariffs - method that updates in a database (overgold_feeexcluder_create_tariffs).
-func (r Repository) UpdateMsgCreateTariffs(hash string, id uint64, ct ...fe.MsgCreateTariffs) error {
-	if len(ct) == 0 {
-		return nil
+func (r Repository) UpdateMsgCreateTariffs(hash string, id uint64, ct fe.MsgCreateTariffs) error {
+	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
+	if err != nil {
+		return errs.Internal{Cause: err.Error()}
 	}
 
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
+	defer commit(tx, err)
+
+	// 1) get unique tariff id
+	tariffList, err := r.getAllTariffWithUniqueID(filter.NewFilter().SetArgument(types.FieldMsgID, ct.Tariff.Id))
 	if err != nil {
 		return err
 	}
+	if len(tariffList) != 1 {
+		return errs.Internal{Cause: "expected 1 tariff"}
+	}
+	tariffID := tariffList[0].ID
 
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
-	// 1) update create tariffs
+	// 2) update create tariffs
 	q := `UPDATE overgold_feeexcluder_create_tariffs SET
 				 tx_hash = $1,
 				 creator = $2,
@@ -116,22 +114,26 @@ func (r Repository) UpdateMsgCreateTariffs(hash string, id uint64, ct ...fe.MsgC
             	 tariff_id = $4                  
 			 WHERE id = $5`
 
-	for _, t := range ct {
-		m := toMsgCreateTariffsDatabase(hash, id, t)
-		if _, err = tx.Exec(q, m.TxHash, m.Creator, m.Denom, m.TariffID, m.ID); err != nil {
-			return err
-		}
+	m := toMsgCreateTariffsDatabase(hash, id, tariffID, ct)
+	if _, err = tx.Exec(q, m.TxHash, m.Creator, m.Denom, m.TariffID, m.ID); err != nil {
+		return err
 	}
 
-	if err = tx.Commit(); err != nil {
-		return errs.Internal{Cause: err.Error()}
+	// 3) get unique id for tariff
+	tariffs, err := r.GetAllTariffs(filter.NewFilter().SetArgument(types.FieldID, ct.Tariff.Id))
+	if err != nil {
+		return err
 	}
 
-	// 2) update tariff
-	for _, t := range ct {
-		if err = r.UpdateTariff(tx, t.Tariff); err != nil {
-			return err
-		}
+	if len(tariffs) != 1 {
+		return errs.Internal{Cause: "expected 1 tariff"}
+	}
+	tariff := tariffs[0].Tariffs
+
+	// 4) update tariff
+	// TODO: dont't use it (testing)
+	if err = r.UpdateTariff(tx, tariffID, tariff[0]); err != nil {
+		return err
 	}
 
 	return nil
@@ -144,7 +146,7 @@ func (r Repository) DeleteMsgCreateTariffs(id uint64) error {
 		return errs.Internal{Cause: err.Error()}
 	}
 
-	defer tx.Rollback()
+	defer commit(tx, err)
 
 	// 1) delete create tariffs
 	// 1.a) get ids for tariff
@@ -159,10 +161,6 @@ func (r Repository) DeleteMsgCreateTariffs(id uint64) error {
 	q := `DELETE FROM overgold_feeexcluder_create_tariffs WHERE id IN ($1)`
 
 	if _, err = tx.Exec(q, id); err != nil {
-		return errs.Internal{Cause: err.Error()}
-	}
-
-	if err = tx.Commit(); err != nil {
 		return errs.Internal{Cause: err.Error()}
 	}
 

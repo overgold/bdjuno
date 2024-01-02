@@ -10,8 +10,6 @@ import (
 	d "github.com/forbole/bdjuno/v4/_tests/database"
 )
 
-// ERROR: insert or update on table "overgold_feeexcluder_delete_tariffs" violates foreign key constraint "overgold_feeexcluder_delete_tariffs_tariff_id_fkey"
-
 func TestRepository_InsertToMsgDeleteTariffs(t *testing.T) {
 	type args struct {
 		msg  []fe.MsgDeleteTariffs
@@ -109,8 +107,10 @@ func TestRepository_UpdateMsgDeleteTariffs(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.UpdateMsgDeleteTariffs(tt.args.hash, tt.args.id, tt.args.msg...); (err != nil) != tt.wantErr {
-				t.Errorf("DeleteMsgDeleteTariffs() error = %v, wantErr %v", err, tt.wantErr)
+			for _, msg := range tt.args.msg {
+				if err := d.Datastore.FeeExluder.UpdateMsgDeleteTariffs(tt.args.hash, tt.args.id, msg); (err != nil) != tt.wantErr {
+					t.Errorf("DeleteMsgDeleteTariffs() error = %v, wantErr %v", err, tt.wantErr)
+				}
 			}
 		})
 	}

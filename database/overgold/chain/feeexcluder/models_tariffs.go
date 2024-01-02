@@ -21,7 +21,7 @@ func toFeesDomain(f db.FeeExcluderFees) types.Fees {
 		MinAmount:   f.MinAmount,
 		NoRefReward: f.NoRefReward,
 		Creator:     f.Creator,
-		Id:          f.ID,
+		Id:          f.MsgID,
 	}
 }
 
@@ -37,7 +37,7 @@ func toFeesDomainList(a []db.FeeExcluderFees) []*types.Fees {
 }
 
 // toFeesDatabase - mapping func to a database model.
-func toFeesDatabase(f *types.Fees) (db.FeeExcluderFees, error) {
+func toFeesDatabase(id uint64, f *types.Fees) (db.FeeExcluderFees, error) {
 	amountFrom, err := strconv.ParseUint(f.AmountFrom, 10, 64)
 	if err != nil {
 		return db.FeeExcluderFees{}, err
@@ -60,13 +60,14 @@ func toFeesDatabase(f *types.Fees) (db.FeeExcluderFees, error) {
 
 	return db.FeeExcluderFees{
 		NoRefReward: f.NoRefReward,
-		ID:          f.Id,
+		ID:          id,
+		MsgID:       f.Id,
 		MinAmount:   f.MinAmount,
-		Creator:     f.Creator,
 		AmountFrom:  amountFrom,
 		Fee:         fee,
 		RefReward:   refReward,
 		StakeReward: stakeReward,
+		Creator:     f.Creator,
 	}, nil
 }
 
@@ -94,7 +95,7 @@ func toTariffDomainList(t []db.FeeExcluderTariff, fees []*types.Fees) []*types.T
 }
 
 // toTariffDatabase - mapping func to a database model.
-func toTariffDatabase(f *types.Tariff) (db.FeeExcluderTariff, error) {
+func toTariffDatabase(id uint64, f *types.Tariff) (db.FeeExcluderTariff, error) {
 	amount, err := strconv.ParseUint(f.Amount, 10, 64)
 	if err != nil {
 		return db.FeeExcluderTariff{}, err
@@ -106,10 +107,11 @@ func toTariffDatabase(f *types.Tariff) (db.FeeExcluderTariff, error) {
 	}
 
 	return db.FeeExcluderTariff{
-		ID:            f.Id,
+		ID:            id,
+		MsgID:         f.Id,
 		Amount:        amount,
-		Denom:         f.Denom,
 		MinRefBalance: minRefBalance,
+		Denom:         f.Denom,
 	}, nil
 }
 
@@ -155,10 +157,10 @@ func toMsgCreateTariffsDomain(t db.FeeExcluderCreateTariffs, tariff *types.Tarif
 }
 
 // toTariffsDatabase - mapping func to a database model.
-func toMsgCreateTariffsDatabase(hash string, id uint64, t types.MsgCreateTariffs) db.FeeExcluderCreateTariffs {
+func toMsgCreateTariffsDatabase(hash string, id, tariffID uint64, t types.MsgCreateTariffs) db.FeeExcluderCreateTariffs {
 	return db.FeeExcluderCreateTariffs{
 		ID:       id,
-		TariffID: t.Tariff.Id,
+		TariffID: tariffID,
 		TxHash:   hash,
 		Creator:  t.Creator,
 		Denom:    t.Denom,
@@ -177,10 +179,10 @@ func toMsgUpdateTariffsDomain(t db.FeeExcluderUpdateTariffs, tariff *types.Tarif
 }
 
 // toTariffsDatabase - mapping func to a database model.
-func toMsgUpdateTariffsDatabase(hash string, id uint64, t types.MsgUpdateTariffs) db.FeeExcluderUpdateTariffs {
+func toMsgUpdateTariffsDatabase(hash string, id, tariffID uint64, t types.MsgUpdateTariffs) db.FeeExcluderUpdateTariffs {
 	return db.FeeExcluderUpdateTariffs{
 		ID:       id,
-		TariffID: t.Tariff.Id,
+		TariffID: tariffID,
 		TxHash:   hash,
 		Creator:  t.Creator,
 		Denom:    t.Denom,

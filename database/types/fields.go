@@ -33,6 +33,7 @@ const (
 	FieldKinds           = "kinds"
 	FieldMinAmount       = "min_amount"
 	FieldMinRefBalance   = "min_ref_balance"
+	FieldMsgID           = "msg_id"
 	FieldNoRefReward     = "no_ref_reward"
 	FieldNumTxs          = "num_txs"
 	FieldOutputs         = "outputs"

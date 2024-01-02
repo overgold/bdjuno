@@ -74,11 +74,7 @@ func (r Repository) InsertToMsgDeleteTariffs(hash string, dt ...fe.MsgDeleteTari
 }
 
 // UpdateMsgDeleteTariffs - method that deletes in a database (overgold_feeexcluder_delete_tariffs).
-func (r Repository) UpdateMsgDeleteTariffs(hash string, id uint64, ut ...fe.MsgDeleteTariffs) error {
-	if len(ut) == 0 {
-		return nil
-	}
-
+func (r Repository) UpdateMsgDeleteTariffs(hash string, id uint64, ut fe.MsgDeleteTariffs) error {
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
 		return err
@@ -96,15 +92,13 @@ func (r Repository) UpdateMsgDeleteTariffs(hash string, id uint64, ut ...fe.MsgD
                  fees_id = $5
 			 WHERE id = $6`
 
-	for _, t := range ut {
-		m, err := toMsgDeleteTariffsDatabase(hash, id, t)
-		if err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
+	m, err := toMsgDeleteTariffsDatabase(hash, id, ut)
+	if err != nil {
+		return errs.Internal{Cause: err.Error()}
+	}
 
-		if _, err = tx.Exec(q, m.TxHash, m.Creator, m.TariffID, m.Denom, m.FeesID, m.ID); err != nil {
-			return err
-		}
+	if _, err = tx.Exec(q, m.TxHash, m.Creator, m.TariffID, m.Denom, m.FeesID, m.ID); err != nil {
+		return err
 	}
 
 	return tx.Commit()

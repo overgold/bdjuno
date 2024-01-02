@@ -66,11 +66,7 @@ func (r Repository) InsertToDailyStats(tx *sqlx.Tx, dailyStats fe.DailyStats) (l
 }
 
 // UpdateDailyStats - method that deletes in a database (overgold_feeexcluder_daily_stats).
-func (r Repository) UpdateDailyStats(tx *sqlx.Tx, id uint64, ut ...fe.DailyStats) (err error) {
-	if len(ut) == 0 {
-		return nil
-	}
-
+func (r Repository) UpdateDailyStats(tx *sqlx.Tx, id uint64, ut fe.DailyStats) (err error) {
 	if tx == nil {
 		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 		if err != nil {
@@ -89,19 +85,17 @@ func (r Repository) UpdateDailyStats(tx *sqlx.Tx, id uint64, ut ...fe.DailyStats
                  count_no_fee = $6
 			 WHERE id = $7`
 
-	for _, t := range ut {
-		m := toDailyStatsDatabase(id, t)
-		if _, err := tx.Exec(q,
-			m.MsgID,
-			pq.Array(m.AmountWithFee),
-			pq.Array(m.AmountNoFee),
-			pq.Array(m.Fee),
-			m.CountWithFee,
-			m.CountNoFee,
-			m.ID,
-		); err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
+	m := toDailyStatsDatabase(id, ut)
+	if _, err := tx.Exec(q,
+		m.MsgID,
+		pq.Array(m.AmountWithFee),
+		pq.Array(m.AmountNoFee),
+		pq.Array(m.Fee),
+		m.CountWithFee,
+		m.CountNoFee,
+		m.ID,
+	); err != nil {
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil

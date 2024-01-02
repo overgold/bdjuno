@@ -10,9 +10,6 @@ import (
 	d "github.com/forbole/bdjuno/v4/_tests/database"
 )
 
-// UpdateMsgCreateTariffs() error = sql: transaction has already been committed or rolled back, wantErr false
-// DeleteMsgCreateTariffs() error = internal_server_error - sql: transaction has already been committed or rolled back, wantErr false
-
 func TestRepository_InsertToMsgCreateTariffs(t *testing.T) {
 	type args struct {
 		msg  []fe.MsgCreateTariffs
@@ -98,8 +95,10 @@ func TestRepository_InsertToMsgCreateTariffs(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.InsertToMsgCreateTariffs(tt.args.hash, tt.args.msg...); (err != nil) != tt.wantErr {
-				t.Errorf("InsertToMsgCreateTariffs() error = %v, wantErr %v", err, tt.wantErr)
+			for _, msg := range tt.args.msg {
+				if err := d.Datastore.FeeExluder.InsertToMsgCreateTariffs(tt.args.hash, msg); (err != nil) != tt.wantErr {
+					t.Errorf("InsertToMsgCreateTariffs() error = %v, wantErr %v", err, tt.wantErr)
+				}
 			}
 		})
 	}
@@ -178,8 +177,10 @@ func TestRepository_UpdateMsgCreateTariffs(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.UpdateMsgCreateTariffs(tt.args.hash, tt.args.id, tt.args.msg...); (err != nil) != tt.wantErr {
-				t.Errorf("UpdateMsgCreateTariffs() error = %v, wantErr %v", err, tt.wantErr)
+			for _, msg := range tt.args.msg {
+				if err := d.Datastore.FeeExluder.UpdateMsgCreateTariffs(tt.args.hash, tt.args.id, msg); (err != nil) != tt.wantErr {
+					t.Errorf("UpdateMsgCreateTariffs() error = %v, wantErr %v", err, tt.wantErr)
+				}
 			}
 		})
 	}

@@ -32,11 +32,7 @@ func (r Repository) GetAllMsgCreateAddress(filter filter.Filter) ([]fe.MsgCreate
 }
 
 // InsertToMsgCreateAddress - insert new data in a database (overgold_feeexcluder_create_address).
-func (r Repository) InsertToMsgCreateAddress(hash string, addresses ...fe.MsgCreateAddress) error {
-	if len(addresses) == 0 {
-		return nil
-	}
-
+func (r Repository) InsertToMsgCreateAddress(hash string, address fe.MsgCreateAddress) error {
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
 		return errs.Internal{Cause: err.Error()}
@@ -55,22 +51,16 @@ func (r Repository) InsertToMsgCreateAddress(hash string, addresses ...fe.MsgCre
 			id, tx_hash, creator, address
 	`
 
-	for _, a := range addresses {
-		m := toMsgCreateAddressDatabase(hash, 0, a)
-		if _, err = tx.Exec(q, m.TxHash, m.Creator, m.Address); err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
+	m := toMsgCreateAddressDatabase(hash, 0, address)
+	if _, err = tx.Exec(q, m.TxHash, m.Creator, m.Address); err != nil {
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return tx.Commit()
 }
 
 // UpdateMsgCreateAddress - method that updates in a database (overgold_feeexcluder_create_address).
-func (r Repository) UpdateMsgCreateAddress(hash string, id uint64, addresses ...fe.MsgCreateAddress) error {
-	if len(addresses) == 0 {
-		return nil
-	}
-
+func (r Repository) UpdateMsgCreateAddress(hash string, id uint64, address fe.MsgCreateAddress) error {
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
 		return err
@@ -86,11 +76,9 @@ func (r Repository) UpdateMsgCreateAddress(hash string, id uint64, addresses ...
 				 address = $3
 			 WHERE id = $4`
 
-	for _, address := range addresses {
-		m := toMsgCreateAddressDatabase(hash, id, address)
-		if _, err = tx.Exec(q, m.TxHash, m.Creator, m.Address, m.ID); err != nil {
-			return err
-		}
+	m := toMsgCreateAddressDatabase(hash, id, address)
+	if _, err = tx.Exec(q, m.TxHash, m.Creator, m.Address, m.ID); err != nil {
+		return err
 	}
 
 	return tx.Commit()

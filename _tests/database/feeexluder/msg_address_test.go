@@ -9,7 +9,7 @@ import (
 	d "github.com/forbole/bdjuno/v4/_tests/database"
 )
 
-// DONE TEST
+// TEST: DONE
 
 func TestRepository_InsertToAddress(t *testing.T) {
 	type args struct {

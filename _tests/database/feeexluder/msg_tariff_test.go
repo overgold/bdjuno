@@ -10,7 +10,7 @@ import (
 	d "github.com/forbole/bdjuno/v4/_tests/database"
 )
 
-// DONE TEST
+// TEST: DONE
 
 func TestRepository_InsertToTariff(t *testing.T) {
 	type args struct {
@@ -107,8 +107,9 @@ func TestRepository_GetAllTariff(t *testing.T) {
 
 func TestRepository_UpdateTariff(t *testing.T) {
 	type args struct {
-		msg  []*fe.Tariff
+		msg  *fe.Tariff
 		hash string
+		id   uint64
 	}
 	tests := []struct {
 		name    string
@@ -118,29 +119,21 @@ func TestRepository_UpdateTariff(t *testing.T) {
 		{
 			name: "[success] UpdateTariff",
 			args: args{
-				msg: []*fe.Tariff{
-					{
-						Id:            0,
-						Amount:        "100000000",
-						Denom:         "ovg",
-						MinRefBalance: "100000000",
-						Fees:          nil,
-					},
-					{
-						Id:            1,
-						Amount:        "2000000000",
-						Denom:         "ovg",
-						MinRefBalance: "100000000",
-						Fees:          nil,
-					},
+				msg: &fe.Tariff{
+					Id:            0,
+					Amount:        "100000000",
+					Denom:         "ovg",
+					MinRefBalance: "100000000",
+					Fees:          nil,
 				},
 				hash: gofakeit.LetterN(64),
+				id:   1,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.UpdateTariff(nil, tt.args.msg...); (err != nil) != tt.wantErr {
+			if err := d.Datastore.FeeExluder.UpdateTariff(nil, tt.args.id, tt.args.msg); (err != nil) != tt.wantErr {
 				t.Errorf("UpdateTariff() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

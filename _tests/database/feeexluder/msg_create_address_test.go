@@ -10,7 +10,7 @@ import (
 	d "github.com/forbole/bdjuno/v4/_tests/database"
 )
 
-// DONE TEST
+// TEST: DONE
 
 func TestRepository_InsertToMsgCreateAddress(t *testing.T) {
 	type args struct {
@@ -41,8 +41,10 @@ func TestRepository_InsertToMsgCreateAddress(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.InsertToMsgCreateAddress(tt.args.hash, tt.args.msg...); (err != nil) != tt.wantErr {
-				t.Errorf("InsertToMsgCreateAddress() error = %v, wantErr %v", err, tt.wantErr)
+			for _, msg := range tt.args.msg {
+				if err := d.Datastore.FeeExluder.InsertToMsgCreateAddress(tt.args.hash, msg); (err != nil) != tt.wantErr {
+					t.Errorf("InsertToMsgCreateAddress() error = %v, wantErr %v", err, tt.wantErr)
+				}
 			}
 		})
 	}
@@ -103,8 +105,10 @@ func TestRepository_UpdateMsgCreateAddress(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.UpdateMsgCreateAddress(tt.args.hash, tt.args.id, tt.args.msg...); (err != nil) != tt.wantErr {
-				t.Errorf("UpdateMsgCreateAddress() error = %v, wantErr %v", err, tt.wantErr)
+			for _, msg := range tt.args.msg {
+				if err := d.Datastore.FeeExluder.UpdateMsgCreateAddress(tt.args.hash, tt.args.id, msg); (err != nil) != tt.wantErr {
+					t.Errorf("UpdateMsgCreateAddress() error = %v, wantErr %v", err, tt.wantErr)
+				}
 			}
 		})
 	}

@@ -10,7 +10,7 @@ import (
 	d "github.com/forbole/bdjuno/v4/_tests/database"
 )
 
-// ERROR: insert or update on table "overgold_feeexcluder_m2m_tariff_tariffs" violates foreign key constraint "overgold_feeexcluder_m2m_tariff_tariffs_tariffs_id_fkey"
+// TEST: DONE
 
 func TestRepository_InsertToMsgUpdateTariffs(t *testing.T) {
 	type args struct {
@@ -97,8 +97,10 @@ func TestRepository_InsertToMsgUpdateTariffs(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.InsertToMsgUpdateTariffs(tt.args.hash, tt.args.msg...); (err != nil) != tt.wantErr {
-				t.Errorf("InsertToMsgUpdateTariffs() error = %v, wantErr %v", err, tt.wantErr)
+			for _, msg := range tt.args.msg {
+				if err := d.Datastore.FeeExluder.InsertToMsgUpdateTariffs(tt.args.hash, msg); (err != nil) != tt.wantErr {
+					t.Errorf("InsertToMsgUpdateTariffs() error = %v, wantErr %v", err, tt.wantErr)
+				}
 			}
 		})
 	}
@@ -170,15 +172,17 @@ func TestRepository_UpdateMsgUpdateTariffs(t *testing.T) {
 						},
 					},
 				},
-				id:   1,
+				id:   2,
 				hash: gofakeit.LetterN(64),
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.UpdateMsgUpdateTariffs(tt.args.hash, tt.args.id, tt.args.msg...); (err != nil) != tt.wantErr {
-				t.Errorf("UpdateMsgUpdateTariffs() error = %v, wantErr %v", err, tt.wantErr)
+			for _, msg := range tt.args.msg {
+				if err := d.Datastore.FeeExluder.UpdateMsgUpdateTariffs(tt.args.hash, tt.args.id, msg); (err != nil) != tt.wantErr {
+					t.Errorf("UpdateMsgUpdateTariffs() error = %v, wantErr %v", err, tt.wantErr)
+				}
 			}
 		})
 	}
