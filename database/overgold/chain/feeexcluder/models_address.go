@@ -3,6 +3,7 @@ package feeexcluder
 import (
 	"git.ooo.ua/vipcoin/ovg-chain/x/feeexcluder/types"
 
+	"github.com/forbole/bdjuno/v4/database/overgold/chain"
 	db "github.com/forbole/bdjuno/v4/database/types"
 )
 
@@ -11,7 +12,7 @@ import (
 // toAddressDomain - mapping func to a domain model.
 func toAddressDomain(a db.FeeExcluderAddress) types.Address {
 	return types.Address{
-		Id:      a.ID,
+		Id:      uint64(a.MsgID.Int64),
 		Address: a.Address,
 		Creator: a.Creator,
 	}
@@ -28,9 +29,10 @@ func toAddressDomainList(a []db.FeeExcluderAddress) []types.Address {
 }
 
 // toAddressDatabase - mapping func to a database model.
-func toAddressDatabase(a types.Address) db.FeeExcluderAddress {
+func toAddressDatabase(id uint64, a types.Address) db.FeeExcluderAddress {
 	return db.FeeExcluderAddress{
-		ID:      a.Id,
+		ID:      id,
+		MsgID:   chain.ToNullInt64(int64(a.Id)),
 		Address: a.Address,
 		Creator: a.Creator,
 	}

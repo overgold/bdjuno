@@ -56,6 +56,41 @@ func (r Repository) GetAllTariffs(f filter.Filter) ([]fe.Tariffs, error) {
 	return result, nil
 }
 
+// GetTariffsDB - method that get data from a db without domain model (overgold_feeexcluder_tariffs).
+func (r Repository) GetTariffsDB(req filter.Filter) (types.FeeExcluderTariffs, error) {
+	query, args := req.SetLimit(1).Build(tableTariffs)
+
+	var result types.FeeExcluderTariffs
+	if err := r.db.GetContext(context.Background(), &result, query, args...); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return types.FeeExcluderTariffs{}, errs.NotFound{What: tableTariffs}
+		}
+
+		return types.FeeExcluderTariffs{}, errs.Internal{Cause: err.Error()}
+	}
+
+	return result, nil
+}
+
+// GetAllTariffsDB - method that get data from a db without domain model (overgold_feeexcluder_tariffs).
+func (r Repository) GetAllTariffsDB(f filter.Filter) ([]types.FeeExcluderTariffs, error) {
+	q, args := f.Build(tableTariffs)
+
+	var tariffs []types.FeeExcluderTariffs
+	if err := r.db.Select(&tariffs, q, args...); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, errs.NotFound{What: tableTariffs}
+		}
+
+		return nil, errs.Internal{Cause: err.Error()}
+	}
+	if len(tariffs) == 0 {
+		return nil, errs.NotFound{What: tableTariffs}
+	}
+
+	return tariffs, nil
+}
+
 // InsertToTariffs - insert new data in a database (overgold_feeexcluder_tariffs).
 func (r Repository) InsertToTariffs(tx *sqlx.Tx, tariffs fe.Tariffs) (lastID uint64, err error) {
 	if tx == nil {
@@ -136,7 +171,7 @@ func (r Repository) UpdateTariffs(tx *sqlx.Tx, id uint64, tariffs fe.Tariffs) (e
 		tariffIDs = append(tariffIDs, tariffs.TariffID)
 	}
 
-	tariffList, err := r.getAllTariffsWithUniqueID(filter.NewFilter().SetArgument(types.FieldID, tariffIDs))
+	tariffList, err := r.getAllTariffWithUniqueID(filter.NewFilter().SetArgument(types.FieldID, tariffIDs))
 	if err != nil {
 		return err
 	}
@@ -191,6 +226,22 @@ func (r Repository) DeleteTariffs(tx *sqlx.Tx, id uint64) (err error) {
 	}
 
 	return nil
+}
+
+// getTariffsWithUniqueID - method that get data from a db (overgold_feeexcluder_tariffs).
+func (r Repository) getTariffsWithUniqueID(req filter.Filter) (types.FeeExcluderTariffs, error) {
+	query, args := req.SetLimit(1).Build(tableTariffs)
+
+	var result types.FeeExcluderTariffs
+	if err := r.db.GetContext(context.Background(), &result, query, args...); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return types.FeeExcluderTariffs{}, errs.NotFound{What: tableTariffs}
+		}
+
+		return types.FeeExcluderTariffs{}, errs.Internal{Cause: err.Error()}
+	}
+
+	return result, nil
 }
 
 // getAllTariffsWithUniqueID - method that get data from a db (overgold_feeexcluder_tariffs).

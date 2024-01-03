@@ -45,14 +45,14 @@ func (r Repository) InsertToAddress(tx *sqlx.Tx, address fe.Address) (lastID uin
 
 	q := `
 		INSERT INTO overgold_feeexcluder_address (
-			id, creator, address
+			msg_id, creator, address
 		) VALUES (
 			$1, $2, $3
 		) RETURNING	id
 	`
 
-	m := toAddressDatabase(address)
-	if err = tx.QueryRowx(q, m.ID, m.Creator, m.Address).Scan(&lastID); err != nil {
+	m := toAddressDatabase(0, address)
+	if err = tx.QueryRowx(q, m.MsgID, m.Creator, m.Address).Scan(&lastID); err != nil {
 		return 0, errs.Internal{Cause: err.Error()}
 	}
 
@@ -60,11 +60,7 @@ func (r Repository) InsertToAddress(tx *sqlx.Tx, address fe.Address) (lastID uin
 }
 
 // UpdateAddress - method that updates in a database (overgold_feeexcluder_address).
-func (r Repository) UpdateAddress(tx *sqlx.Tx, addresses ...fe.Address) (err error) {
-	if len(addresses) == 0 {
-		return nil
-	}
-
+func (r Repository) UpdateAddress(tx *sqlx.Tx, id uint64, address fe.Address) (err error) {
 	if tx == nil {
 		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 		if err != nil {
@@ -75,15 +71,14 @@ func (r Repository) UpdateAddress(tx *sqlx.Tx, addresses ...fe.Address) (err err
 	}
 
 	q := `UPDATE overgold_feeexcluder_address SET
-				 creator = $1,
-				 address = $2
-			 WHERE id = $3`
+				 msg_id = $1,
+				 creator = $2,
+				 address = $3
+			 WHERE id = $4`
 
-	for _, address := range addresses {
-		m := toAddressDatabase(address)
-		if _, err = tx.Exec(q, m.Creator, m.Address, m.ID); err != nil {
-			return err
-		}
+	m := toAddressDatabase(id, address)
+	if _, err = tx.Exec(q, m.MsgID, m.Creator, m.Address, m.ID); err != nil {
+		return err
 	}
 
 	return nil

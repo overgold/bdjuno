@@ -13,15 +13,17 @@ require (
 	cosmossdk.io/math v1.2.0
 	cosmossdk.io/simapp v0.0.0-20230323161446-0af178d721ff
 	git.ooo.ua/vipcoin/lib/errs v1.0.7
-	git.ooo.ua/vipcoin/lib/filter v1.0.20
+	git.ooo.ua/vipcoin/lib/filter v1.0.21
 	git.ooo.ua/vipcoin/lib/vault v1.0.7
-	git.ooo.ua/vipcoin/ovg-chain v1.0.8
+	git.ooo.ua/vipcoin/ovg-chain v1.0.9
+	github.com/brianvoe/gofakeit/v6 v6.23.2
 	github.com/cometbft/cometbft v0.37.2
-	github.com/cosmos/cosmos-sdk v0.47.5
+	github.com/cosmos/cosmos-sdk v0.47.7
 	github.com/cosmos/gogoproto v1.4.10
 	github.com/forbole/juno/v5 v5.2.0
 	github.com/go-co-op/gocron v1.36.0
 	github.com/golangci/golangci-lint v1.55.2
+	github.com/jackc/pgx/v5 v5.5.1
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.9
 	github.com/pelletier/go-toml v1.9.5
@@ -79,7 +81,6 @@ require (
 	github.com/bombsimon/wsl/v3 v3.4.0 // indirect
 	github.com/breml/bidichk v0.2.7 // indirect
 	github.com/breml/errchkjson v0.3.6 // indirect
-	github.com/brianvoe/gofakeit/v6 v6.26.3 // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.3.2 // indirect
 	github.com/butuzov/ireturn v0.2.2 // indirect
 	github.com/butuzov/mirror v1.1.0 // indirect
@@ -202,7 +203,6 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20231201235250-de7065d80cb9 // indirect
-	github.com/jackc/pgx/v5 v5.5.1 // indirect
 	github.com/jackc/puddle/v2 v2.2.1 // indirect
 	github.com/jgautheron/goconst v1.6.0 // indirect
 	github.com/jingyugao/rowserrcheck v1.1.1 // indirect
@@ -232,7 +232,7 @@ require (
 	github.com/maratori/testpackage v1.1.1 // indirect
 	github.com/matoous/godox v0.0.0-20230222163458-006bad1f9d26 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.19 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/mbilski/exhaustivestruct v1.2.0 // indirect
@@ -326,8 +326,8 @@ require (
 	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/oauth2 v0.11.0 // indirect
 	golang.org/x/sync v0.4.0 // indirect
-	golang.org/x/sys v0.13.0 // indirect
-	golang.org/x/term v0.13.0 // indirect
+	golang.org/x/sys v0.14.0 // indirect
+	golang.org/x/term v0.14.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/tools v0.14.0 // indirect

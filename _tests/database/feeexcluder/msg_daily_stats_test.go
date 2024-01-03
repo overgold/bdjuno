@@ -1,4 +1,4 @@
-package feeexluder
+package feeexcluder
 
 import (
 	"testing"
@@ -9,8 +9,6 @@ import (
 
 	d "github.com/forbole/bdjuno/v4/_tests/database"
 )
-
-// TEST: DONE
 
 func TestRepository_InsertToDailyStats(t *testing.T) {
 	type args struct {
@@ -48,7 +46,7 @@ func TestRepository_InsertToDailyStats(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			for _, msg := range tt.args.msg {
-				if _, err := d.Datastore.FeeExluder.InsertToDailyStats(nil, msg); (err != nil) != tt.wantErr {
+				if _, err := d.Datastore.FeeExcluder.InsertToDailyStats(nil, msg); (err != nil) != tt.wantErr {
 					t.Errorf("InsertToDailyStats() error = %v, wantErr %v", err, tt.wantErr)
 				}
 			}
@@ -74,7 +72,7 @@ func TestRepository_GetAllDailyStats(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			entity, err := d.Datastore.FeeExluder.GetAllDailyStats(tt.args.filter)
+			entity, err := d.Datastore.FeeExcluder.GetAllDailyStats(tt.args.filter)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetAllDailyStats() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -114,7 +112,7 @@ func TestRepository_UpdateDailyStats(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			for _, msg := range tt.args.msg {
-				if err := d.Datastore.FeeExluder.UpdateDailyStats(nil, tt.args.id, msg); (err != nil) != tt.wantErr {
+				if err := d.Datastore.FeeExcluder.UpdateDailyStats(nil, tt.args.id, msg); (err != nil) != tt.wantErr {
 					t.Errorf("UpdateDailyStats() error = %v, wantErr %v", err, tt.wantErr)
 				}
 			}
@@ -140,7 +138,7 @@ func TestRepository_DeleteDailyStats(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.DeleteDailyStats(nil, tt.args.id); (err != nil) != tt.wantErr {
+			if err := d.Datastore.FeeExcluder.DeleteDailyStats(nil, tt.args.id); (err != nil) != tt.wantErr {
 				t.Errorf("DeleteDailyStats() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

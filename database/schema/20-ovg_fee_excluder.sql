@@ -1,6 +1,7 @@
 -- +migrate Up
 CREATE TABLE overgold_feeexcluder_address ( 
-    id          BIGINT      NOT NULL PRIMARY KEY,
+    id          BIGSERIAL   NOT NULL PRIMARY KEY,
+    msg_id      BIGINT,
     address     TEXT        NOT NULL,
     creator     TEXT        NOT NULL
 );
@@ -54,38 +55,38 @@ CREATE TABLE overgold_feeexcluder_tariffs (
 );
 
 CREATE TABLE overgold_feeexcluder_m2m_tariff_tariffs (
-    tariff_id  BIGINT REFERENCES overgold_feeexcluder_tariff(id),
-    tariffs_id BIGINT REFERENCES overgold_feeexcluder_tariffs(id),
+    tariff_id  BIGSERIAL REFERENCES overgold_feeexcluder_tariff(id),
+    tariffs_id BIGSERIAL REFERENCES overgold_feeexcluder_tariffs(id),
     PRIMARY KEY (tariff_id, tariffs_id)
 );
 
 CREATE TABLE overgold_feeexcluder_genesis_state (
-    id                  BIGINT      NOT NULL PRIMARY KEY,
+    id                  BIGSERIAL NOT NULL PRIMARY KEY,
     address_count       BIGSERIAL,
     daily_stats_count   BIGSERIAL
 );
 
 CREATE TABLE overgold_feeexcluder_m2m_genesis_state_address (
-    genesis_state_id  BIGINT REFERENCES overgold_feeexcluder_genesis_state(id),
-    address_id        BIGINT REFERENCES overgold_feeexcluder_address(id),
+    genesis_state_id  BIGSERIAL REFERENCES overgold_feeexcluder_genesis_state(id),
+    address_id        BIGSERIAL REFERENCES overgold_feeexcluder_address(id),
     PRIMARY KEY (genesis_state_id, address_id)
 );
 
 CREATE TABLE overgold_feeexcluder_m2m_genesis_state_daily_stats (
-    genesis_state_id  BIGINT    REFERENCES overgold_feeexcluder_genesis_state(id),
+    genesis_state_id  BIGSERIAL REFERENCES overgold_feeexcluder_genesis_state(id),
     daily_stats_id    BIGSERIAL REFERENCES overgold_feeexcluder_daily_stats(id),
     PRIMARY KEY (genesis_state_id, daily_stats_id)
 );
 
 CREATE TABLE overgold_feeexcluder_m2m_genesis_state_stats (
-    genesis_state_id  BIGINT REFERENCES overgold_feeexcluder_genesis_state(id),
-    stats_id          TEXT   REFERENCES overgold_feeexcluder_stats(id),
+    genesis_state_id  BIGSERIAL REFERENCES overgold_feeexcluder_genesis_state(id),
+    stats_id          TEXT      REFERENCES overgold_feeexcluder_stats(id),
     PRIMARY KEY (genesis_state_id, stats_id)
 );
 
 CREATE TABLE overgold_feeexcluder_m2m_genesis_state_tariffs (
-    genesis_state_id  BIGINT REFERENCES overgold_feeexcluder_genesis_state(id),
-    tariffs_id        BIGINT REFERENCES overgold_feeexcluder_tariffs(id),
+    genesis_state_id  BIGSERIAL REFERENCES overgold_feeexcluder_genesis_state(id),
+    tariffs_id        BIGINT    REFERENCES overgold_feeexcluder_tariffs(id),
     PRIMARY KEY (genesis_state_id, tariffs_id)
 );
 

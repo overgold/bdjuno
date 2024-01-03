@@ -42,6 +42,15 @@ func (r Repository) InsertToMsgCreateAddress(hash string, address fe.MsgCreateAd
 		_ = tx.Rollback()
 	}()
 
+	// 1) add address
+	if _, err = r.InsertToAddress(tx, fe.Address{
+		Address: address.Address,
+		Creator: address.Creator,
+	}); err != nil {
+		return err
+	}
+
+	// 2) add create tariffs
 	q := `
 		INSERT INTO overgold_feeexcluder_create_address (
 			tx_hash, creator, address
@@ -86,7 +95,6 @@ func (r Repository) UpdateMsgCreateAddress(hash string, id uint64, address fe.Ms
 
 // DeleteMsgCreateAddress - method that deletes data in a database (overgold_feeexcluder_create_address).
 func (r Repository) DeleteMsgCreateAddress(id uint64) error {
-
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
 		return errs.Internal{Cause: err.Error()}

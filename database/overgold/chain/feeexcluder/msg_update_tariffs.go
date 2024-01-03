@@ -49,7 +49,6 @@ func (r Repository) GetAllMsgUpdateTariffs(f filter.Filter) ([]fe.MsgUpdateTarif
 
 // InsertToMsgUpdateTariffs - insert new data in a database (overgold_feeexcluder_update_tariffs).
 func (r Repository) InsertToMsgUpdateTariffs(hash string, ut fe.MsgUpdateTariffs) error {
-
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
 		return errs.Internal{Cause: err.Error()}
@@ -99,14 +98,10 @@ func (r Repository) UpdateMsgUpdateTariffs(hash string, id uint64, ut fe.MsgUpda
 	}()
 
 	// 1) get unique tariff id
-	tariff, err := r.getAllTariffWithUniqueID(filter.NewFilter().SetArgument(types.FieldMsgID, ut.Tariff.Id))
+	tariff, err := r.getTariffWithUniqueID(filter.NewFilter().SetArgument(types.FieldMsgID, ut.Tariff.Id))
 	if err != nil {
 		return err
 	}
-	if len(tariff) != 1 {
-		return errs.Internal{Cause: "expected 1 tariff"}
-	}
-	tariffID := tariff[0].ID
 
 	// 2) update update tariffs
 	q := `UPDATE overgold_feeexcluder_update_tariffs SET
@@ -116,13 +111,13 @@ func (r Repository) UpdateMsgUpdateTariffs(hash string, id uint64, ut fe.MsgUpda
             	 denom = $4
 			 WHERE id = $5`
 
-	m := toMsgUpdateTariffsDatabase(hash, id, tariffID, ut)
+	m := toMsgUpdateTariffsDatabase(hash, id, tariff.ID, ut)
 	if _, err = tx.Exec(q, m.TxHash, m.Creator, m.TariffID, m.Denom, m.ID); err != nil {
 		return err
 	}
 
 	// 3) update tariff
-	if err = r.UpdateTariff(tx, tariffID, ut.Tariff); err != nil {
+	if err = r.UpdateTariff(tx, tariff.ID, ut.Tariff); err != nil {
 		return err
 	}
 

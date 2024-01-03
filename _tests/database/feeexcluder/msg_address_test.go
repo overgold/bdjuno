@@ -1,4 +1,4 @@
-package feeexluder
+package feeexcluder
 
 import (
 	"testing"
@@ -8,8 +8,6 @@ import (
 
 	d "github.com/forbole/bdjuno/v4/_tests/database"
 )
-
-// TEST: DONE
 
 func TestRepository_InsertToAddress(t *testing.T) {
 	type args struct {
@@ -41,7 +39,7 @@ func TestRepository_InsertToAddress(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			for _, msg := range tt.args.msg {
-				if _, err := d.Datastore.FeeExluder.InsertToAddress(nil, msg); (err != nil) != tt.wantErr {
+				if _, err := d.Datastore.FeeExcluder.InsertToAddress(nil, msg); (err != nil) != tt.wantErr {
 					t.Errorf("InsertToAddress() error = %v, wantErr %v", err, tt.wantErr)
 				}
 			}
@@ -67,7 +65,7 @@ func TestRepository_GetAllAddress(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			entity, err := d.Datastore.FeeExluder.GetAllAddress(tt.args.filter)
+			entity, err := d.Datastore.FeeExcluder.GetAllAddress(tt.args.filter)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetAllAddress() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -80,6 +78,7 @@ func TestRepository_GetAllAddress(t *testing.T) {
 func TestRepository_UpdateAddress(t *testing.T) {
 	type args struct {
 		msg []fe.Address
+		id  uint64
 	}
 	tests := []struct {
 		name    string
@@ -91,18 +90,21 @@ func TestRepository_UpdateAddress(t *testing.T) {
 			args: args{
 				msg: []fe.Address{
 					{
-						Id:      1,
+						Id:      3,
 						Address: "ovg1wvuy80m54dl8qw63u3jnaqjc3y82gnlk36gkjj",
 						Creator: d.TestAddressCreator,
 					},
 				},
+				id: 1,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.UpdateAddress(nil, tt.args.msg...); (err != nil) != tt.wantErr {
-				t.Errorf("UpdateAddress() error = %v, wantErr %v", err, tt.wantErr)
+			for _, msg := range tt.args.msg {
+				if err := d.Datastore.FeeExcluder.UpdateAddress(nil, tt.args.id, msg); (err != nil) != tt.wantErr {
+					t.Errorf("UpdateAddress() error = %v, wantErr %v", err, tt.wantErr)
+				}
 			}
 		})
 	}
@@ -126,7 +128,7 @@ func TestRepository_DeleteAddress(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.DeleteAddress(nil, tt.args.id); (err != nil) != tt.wantErr {
+			if err := d.Datastore.FeeExcluder.DeleteAddress(nil, tt.args.id); (err != nil) != tt.wantErr {
 				t.Errorf("DeleteAddress() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

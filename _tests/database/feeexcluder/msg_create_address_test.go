@@ -1,4 +1,4 @@
-package feeexluder
+package feeexcluder
 
 import (
 	"testing"
@@ -9,8 +9,6 @@ import (
 
 	d "github.com/forbole/bdjuno/v4/_tests/database"
 )
-
-// TEST: DONE
 
 func TestRepository_InsertToMsgCreateAddress(t *testing.T) {
 	type args struct {
@@ -42,7 +40,7 @@ func TestRepository_InsertToMsgCreateAddress(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			for _, msg := range tt.args.msg {
-				if err := d.Datastore.FeeExluder.InsertToMsgCreateAddress(tt.args.hash, msg); (err != nil) != tt.wantErr {
+				if err := d.Datastore.FeeExcluder.InsertToMsgCreateAddress(tt.args.hash, msg); (err != nil) != tt.wantErr {
 					t.Errorf("InsertToMsgCreateAddress() error = %v, wantErr %v", err, tt.wantErr)
 				}
 			}
@@ -68,7 +66,7 @@ func TestRepository_GetAllMsgCreateAddress(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			entity, err := d.Datastore.FeeExluder.GetAllMsgCreateAddress(tt.args.filter)
+			entity, err := d.Datastore.FeeExcluder.GetAllMsgCreateAddress(tt.args.filter)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetAllMsgCreateAddress() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -94,11 +92,11 @@ func TestRepository_UpdateMsgCreateAddress(t *testing.T) {
 			args: args{
 				msg: []fe.MsgCreateAddress{
 					{
-						Address: "ovg1wvuy80m54dl8qw63u3jnaqjc3y82gnlk36gkjj",
+						Address: d.TestAddressCreator,
 						Creator: d.TestAddressCreator,
 					},
 				},
-				id:   1,
+				id:   2,
 				hash: gofakeit.LetterN(64),
 			},
 		},
@@ -106,7 +104,7 @@ func TestRepository_UpdateMsgCreateAddress(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			for _, msg := range tt.args.msg {
-				if err := d.Datastore.FeeExluder.UpdateMsgCreateAddress(tt.args.hash, tt.args.id, msg); (err != nil) != tt.wantErr {
+				if err := d.Datastore.FeeExcluder.UpdateMsgCreateAddress(tt.args.hash, tt.args.id, msg); (err != nil) != tt.wantErr {
 					t.Errorf("UpdateMsgCreateAddress() error = %v, wantErr %v", err, tt.wantErr)
 				}
 			}
@@ -132,7 +130,7 @@ func TestRepository_DeleteMsgCreateAddress(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.DeleteMsgCreateAddress(tt.args.id); (err != nil) != tt.wantErr {
+			if err := d.Datastore.FeeExcluder.DeleteMsgCreateAddress(tt.args.id); (err != nil) != tt.wantErr {
 				t.Errorf("DeleteMsgCreateAddress() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

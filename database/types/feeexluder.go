@@ -1,6 +1,7 @@
 package types
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/shopspring/decimal"
@@ -10,9 +11,10 @@ import (
 type (
 	// FeeExcluderAddress represents a single row inside the overgold_feeexcluder_address
 	FeeExcluderAddress struct {
-		ID      uint64 `db:"id"`
-		Address string `db:"address"`
-		Creator string `db:"creator"`
+		ID      uint64        `db:"id"`     // unique id as primary key
+		MsgID   sql.NullInt64 `db:"msg_id"` // message id
+		Address string        `db:"address"`
+		Creator string        `db:"creator"`
 	}
 
 	// FeeExcluderDailyStats represents a single row inside the overgold_feeexcluder_daily_stats

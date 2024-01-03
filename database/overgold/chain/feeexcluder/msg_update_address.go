@@ -32,11 +32,7 @@ func (r Repository) GetAllMsgUpdateAddress(filter filter.Filter) ([]fe.MsgUpdate
 }
 
 // InsertToMsgUpdateAddress - insert new data in a database (overgold_feeexcluder_update_address).
-func (r Repository) InsertToMsgUpdateAddress(hash string, addresses ...fe.MsgUpdateAddress) error {
-	if len(addresses) == 0 {
-		return nil
-	}
-
+func (r Repository) InsertToMsgUpdateAddress(hash string, address fe.MsgUpdateAddress) error {
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
 		return errs.Internal{Cause: err.Error()}
@@ -55,11 +51,9 @@ func (r Repository) InsertToMsgUpdateAddress(hash string, addresses ...fe.MsgUpd
 			id, tx_hash, creator, address
 	`
 
-	for _, a := range addresses {
-		m := toMsgUpdateAddressDatabase(hash, a)
-		if _, err = tx.Exec(q, m.ID, m.TxHash, m.Creator, m.Address); err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
+	m := toMsgUpdateAddressDatabase(hash, address)
+	if _, err = tx.Exec(q, m.ID, m.TxHash, m.Creator, m.Address); err != nil {
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return tx.Commit()

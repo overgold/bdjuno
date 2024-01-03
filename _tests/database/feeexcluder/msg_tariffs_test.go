@@ -1,4 +1,4 @@
-package feeexluder
+package feeexcluder
 
 import (
 	"testing"
@@ -8,8 +8,6 @@ import (
 
 	d "github.com/forbole/bdjuno/v4/_tests/database"
 )
-
-// TEST: DONE
 
 func TestRepository_InsertToTariffs(t *testing.T) {
 	type args struct {
@@ -74,7 +72,7 @@ func TestRepository_InsertToTariffs(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			for _, msg := range tt.args.msg {
-				if _, err := d.Datastore.FeeExluder.InsertToTariffs(nil, msg); (err != nil) != tt.wantErr {
+				if _, err := d.Datastore.FeeExcluder.InsertToTariffs(nil, msg); (err != nil) != tt.wantErr {
 					t.Errorf("InsertToTariffs() error = %v, wantErr %v", err, tt.wantErr)
 				}
 			}
@@ -100,9 +98,37 @@ func TestRepository_GetAllTariffs(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			entity, err := d.Datastore.FeeExluder.GetAllTariffs(tt.args.filter)
+			entity, err := d.Datastore.FeeExcluder.GetAllTariffs(tt.args.filter)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetAllTariffs() error = %v, wantErr %v", err, tt.wantErr)
+			}
+
+			t.Logf("size: %d", len(entity))
+		})
+	}
+}
+
+func TestRepository_GetAllTariffsDB(t *testing.T) {
+	type args struct {
+		filter filter.Filter
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "[success] GetAllTariffsDB",
+			args: args{
+				filter: filter.NewFilter(),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			entity, err := d.Datastore.FeeExcluder.GetAllTariffsDB(tt.args.filter)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetAllTariffsDB() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
 			t.Logf("size: %d", len(entity))
@@ -172,7 +198,7 @@ func TestRepository_UpdateTariffs(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.UpdateTariffs(nil, tt.args.id, tt.args.msg); (err != nil) != tt.wantErr {
+			if err := d.Datastore.FeeExcluder.UpdateTariffs(nil, tt.args.id, tt.args.msg); (err != nil) != tt.wantErr {
 				t.Errorf("UpdateTariffs() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -197,7 +223,7 @@ func TestRepository_DeleteTariffs(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.DeleteTariffs(nil, tt.args.id); (err != nil) != tt.wantErr {
+			if err := d.Datastore.FeeExcluder.DeleteTariffs(nil, tt.args.id); (err != nil) != tt.wantErr {
 				t.Errorf("DeleteTariffs() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

@@ -76,7 +76,7 @@ func toFeesDatabase(id uint64, f *types.Fees) (db.FeeExcluderFees, error) {
 // toTariffDomain - mapping func to a domain model.
 func toTariffDomain(f db.FeeExcluderTariff, fees []*types.Fees) *types.Tariff {
 	return &types.Tariff{
-		Id:            f.ID,
+		Id:            f.MsgID,
 		Amount:        strconv.FormatUint(f.Amount, 10),
 		Denom:         f.Denom,
 		MinRefBalance: strconv.FormatUint(f.MinRefBalance, 10),

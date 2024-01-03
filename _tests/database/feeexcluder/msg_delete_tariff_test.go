@@ -1,4 +1,4 @@
-package feeexluder
+package feeexcluder
 
 import (
 	"testing"
@@ -10,6 +10,7 @@ import (
 	d "github.com/forbole/bdjuno/v4/_tests/database"
 )
 
+// NOTE: insert previously created tariff and fees, e.g.: run TestRepository_InsertToTariff()
 func TestRepository_InsertToMsgDeleteTariffs(t *testing.T) {
 	type args struct {
 		msg  []fe.MsgDeleteTariffs
@@ -34,7 +35,7 @@ func TestRepository_InsertToMsgDeleteTariffs(t *testing.T) {
 						Creator:  d.TestAddressCreator,
 						Denom:    "ovg",
 						TariffID: "1",
-						FeeID:    "2",
+						FeeID:    "1",
 					},
 				},
 				hash: gofakeit.LetterN(64),
@@ -43,8 +44,10 @@ func TestRepository_InsertToMsgDeleteTariffs(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.InsertToMsgDeleteTariffs(tt.args.hash, tt.args.msg...); (err != nil) != tt.wantErr {
-				t.Errorf("InsertToMsgDeleteTariffs() error = %v, wantErr %v", err, tt.wantErr)
+			for _, msg := range tt.args.msg {
+				if err := d.Datastore.FeeExcluder.InsertToMsgDeleteTariffs(tt.args.hash, msg); (err != nil) != tt.wantErr {
+					t.Errorf("InsertToMsgDeleteTariffs() error = %v, wantErr %v", err, tt.wantErr)
+				}
 			}
 		})
 	}
@@ -68,7 +71,7 @@ func TestRepository_GetAllMsgDeleteTariffs(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			entity, err := d.Datastore.FeeExluder.GetAllMsgDeleteTariffs(tt.args.filter)
+			entity, err := d.Datastore.FeeExcluder.GetAllMsgDeleteTariffs(tt.args.filter)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetAllMsgDeleteTariffs() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -108,7 +111,7 @@ func TestRepository_UpdateMsgDeleteTariffs(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			for _, msg := range tt.args.msg {
-				if err := d.Datastore.FeeExluder.UpdateMsgDeleteTariffs(tt.args.hash, tt.args.id, msg); (err != nil) != tt.wantErr {
+				if err := d.Datastore.FeeExcluder.UpdateMsgDeleteTariffs(tt.args.hash, tt.args.id, msg); (err != nil) != tt.wantErr {
 					t.Errorf("DeleteMsgDeleteTariffs() error = %v, wantErr %v", err, tt.wantErr)
 				}
 			}
@@ -140,7 +143,7 @@ func TestRepository_DeleteMsgDeleteTariffs(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.DeleteMsgDeleteTariffs(tt.args.id); (err != nil) != tt.wantErr {
+			if err := d.Datastore.FeeExcluder.DeleteMsgDeleteTariffs(tt.args.id); (err != nil) != tt.wantErr {
 				t.Errorf("DeleteMsgDeleteTariffs() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

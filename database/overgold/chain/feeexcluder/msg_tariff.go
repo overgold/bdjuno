@@ -16,10 +16,10 @@ import (
 // GetAllTariff - method that get data from a db (overgold_feeexcluder_tariff).
 // TODO: use JOIN and other db model, e.g.:
 //
-// SELECT f.*, mt.*
-// FROM overgold_feeexcluder_fees AS f
-// JOIN overgold_feeexcluder_m2m_tariff_fees AS mt ON f.id = mt.fees_id
-// JOIN overgold_feeexcluder_tariff AS t ON mt.tariff_id = t.id;
+//	SELECT f.*, mt.*
+//	FROM overgold_feeexcluder_fees AS f
+//	JOIN overgold_feeexcluder_m2m_tariff_fees AS mt ON f.id = mt.fees_id
+//	JOIN overgold_feeexcluder_tariff AS t ON mt.tariff_id = t.id;
 func (r Repository) GetAllTariff(f filter.Filter) ([]*fe.Tariff, error) {
 	q, args := f.Build(tableTariff)
 
@@ -115,7 +115,6 @@ func (r Repository) InsertToTariff(tx *sqlx.Tx, tariff *fe.Tariff) (lastID uint6
 }
 
 // UpdateTariff - method that updates in a database (overgold_feeexcluder_tariff).
-// TODO: refactor unique fee primary key
 func (r Repository) UpdateTariff(tx *sqlx.Tx, id uint64, tariff *fe.Tariff) (err error) {
 	if tx == nil {
 		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
@@ -143,7 +142,7 @@ func (r Repository) UpdateTariff(tx *sqlx.Tx, id uint64, tariff *fe.Tariff) (err
 		return err
 	}
 
-	// 2) get fees ids (only custom unique primary key)
+	// 2) get fees ids (custom unique ids and msg ids)
 	m2mFees, err := r.GetAllM2MTariffFees(filter.NewFilter().SetArgument(types.FieldTariffID, id))
 	if err != nil {
 		return err
@@ -211,6 +210,22 @@ func (r Repository) DeleteTariff(tx *sqlx.Tx, id uint64) (err error) {
 	}
 
 	return nil
+}
+
+// getTariffWithUniqueID - method that get data from a db (overgold_feeexcluder_tariffs).
+func (r Repository) getTariffWithUniqueID(req filter.Filter) (types.FeeExcluderTariff, error) {
+	query, args := req.SetLimit(1).Build(tableTariff)
+
+	var result types.FeeExcluderTariff
+	if err := r.db.GetContext(context.Background(), &result, query, args...); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return types.FeeExcluderTariff{}, errs.NotFound{What: tableTariff}
+		}
+
+		return types.FeeExcluderTariff{}, errs.Internal{Cause: err.Error()}
+	}
+
+	return result, nil
 }
 
 // getAllTariffWithUniqueID - method that get data from a db (overgold_feeexcluder_tariffs).

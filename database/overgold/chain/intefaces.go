@@ -60,7 +60,7 @@ type (
 
 		DeleteMsgUpdateAddress(id uint64) error
 		GetAllMsgUpdateAddress(filter filter.Filter) ([]fe.MsgUpdateAddress, error)
-		InsertToMsgUpdateAddress(hash string, addresses ...fe.MsgUpdateAddress) error
+		InsertToMsgUpdateAddress(hash string, addresses fe.MsgUpdateAddress) error
 		UpdateMsgUpdateAddress(hash string, addresses ...fe.MsgUpdateAddress) error
 
 		DeleteMsgDeleteAddress(id uint64) error
@@ -68,10 +68,8 @@ type (
 		InsertToMsgDeleteAddress(hash string, addresses ...fe.MsgDeleteAddress) error
 		UpdateMsgDeleteAddress(hash string, addresses ...fe.MsgDeleteAddress) error
 
-		DeleteMsgCreateTariffs(id uint64) error
 		GetAllMsgCreateTariffs(f filter.Filter) ([]fe.MsgCreateTariffs, error)
 		InsertToMsgCreateTariffs(hash string, ct fe.MsgCreateTariffs) error
-		UpdateMsgCreateTariffs(hash string, id uint64, ct fe.MsgCreateTariffs) error
 
 		DeleteMsgUpdateTariffs(id uint64) error
 		GetAllMsgUpdateTariffs(f filter.Filter) ([]fe.MsgUpdateTariffs, error)
@@ -80,20 +78,19 @@ type (
 
 		DeleteMsgDeleteTariffs(id uint64) error
 		GetAllMsgDeleteTariffs(f filter.Filter) ([]fe.MsgDeleteTariffs, error)
-		InsertToMsgDeleteTariffs(hash string, dt ...fe.MsgDeleteTariffs) error
+		InsertToMsgDeleteTariffs(hash string, dt fe.MsgDeleteTariffs) error
 		UpdateMsgDeleteTariffs(hash string, id uint64, ut fe.MsgDeleteTariffs) error
 
 		DeleteGenesisState(id uint64) error
 		GetAllGenesisState(filter filter.Filter) ([]fe.GenesisState, error)
 		InsertToGenesisState(gsList fe.GenesisState) error
-		UpdateGenesisState(genesisStateID uint64, gsList fe.GenesisState) error
 	}
 
 	FeeExcluderLinkedTables interface {
 		DeleteAddress(tx *sqlx.Tx, id uint64) error
 		GetAllAddress(filter filter.Filter) ([]fe.Address, error)
 		InsertToAddress(tx *sqlx.Tx, addresses fe.Address) (uint64, error)
-		UpdateAddress(tx *sqlx.Tx, addresses ...fe.Address) error
+		UpdateAddress(tx *sqlx.Tx, id uint64, address fe.Address) error
 
 		DeleteFees(tx *sqlx.Tx, id uint64) error
 		GetAllFees(filter filter.Filter) ([]*fe.Fees, error)
@@ -117,6 +114,8 @@ type (
 
 		DeleteTariffs(tx *sqlx.Tx, id uint64) error
 		GetAllTariffs(f filter.Filter) ([]fe.Tariffs, error)
+		GetTariffsDB(req filter.Filter) (types.FeeExcluderTariffs, error)
+		GetAllTariffsDB(f filter.Filter) ([]types.FeeExcluderTariffs, error)
 		InsertToTariffs(tx *sqlx.Tx, tariffs fe.Tariffs) (uint64, error)
 		UpdateTariffs(tx *sqlx.Tx, id uint64, tariffs fe.Tariffs) error
 	}

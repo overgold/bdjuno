@@ -1,4 +1,4 @@
-package feeexluder
+package feeexcluder
 
 import (
 	"testing"
@@ -10,7 +10,6 @@ import (
 	"github.com/forbole/bdjuno/v4/database/types"
 )
 
-// TEST: DONE
 // NOTE: add entity's in other tables before testing (tariff, fees)
 
 func TestRepository_InsertToM2MTariffFees(t *testing.T) {
@@ -42,7 +41,7 @@ func TestRepository_InsertToM2MTariffFees(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.InsertToM2MTariffFees(nil, tt.args.msg...); (err != nil) != tt.wantErr {
+			if err := d.Datastore.FeeExcluder.InsertToM2MTariffFees(nil, tt.args.msg...); (err != nil) != tt.wantErr {
 				t.Errorf("InsertToM2MTariffFees() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -79,7 +78,7 @@ func TestRepository_GetAllM2MTariffFees(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			entity, err := d.Datastore.FeeExluder.GetAllM2MTariffFees(tt.args.filter)
+			entity, err := d.Datastore.FeeExcluder.GetAllM2MTariffFees(tt.args.filter)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetAllM2MTariffFees() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -110,7 +109,7 @@ func TestRepository_DeleteM2MTariffFees(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.DeleteM2MTariffFeesByTariff(nil, tt.args.msg.TariffID); (err != nil) != tt.wantErr {
+			if err := d.Datastore.FeeExcluder.DeleteM2MTariffFeesByTariff(nil, tt.args.msg.TariffID); (err != nil) != tt.wantErr {
 				t.Errorf("DeleteM2MTariffFeesByTariff() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

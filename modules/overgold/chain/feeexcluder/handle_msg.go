@@ -20,14 +20,11 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	case *types.MsgDeleteAddress:
 		return m.handleMsgDeleteAddress(tx, index, feeExcluderMsg)
 	case *types.MsgCreateTariffs:
-		// TODO: add logic and other cases
-		return nil
+		return m.handleMsgCreateTariffs(tx, index, feeExcluderMsg)
 	case *types.MsgUpdateTariffs:
-		// TODO: add logic and other cases
-		return nil
+		return m.handleMsgUpdateTariffs(tx, index, feeExcluderMsg)
 	case *types.MsgDeleteTariffs:
-		// TODO: add logic and other cases
-		return nil
+		return m.handleMsgDeleteTariffs(tx, index, feeExcluderMsg)
 	default:
 		return nil
 	}

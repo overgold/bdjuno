@@ -1,4 +1,4 @@
-package feeexluder
+package feeexcluder
 
 import (
 	"testing"
@@ -9,8 +9,6 @@ import (
 
 	d "github.com/forbole/bdjuno/v4/_tests/database"
 )
-
-// TEST: DONE
 
 func TestRepository_InsertToTariff(t *testing.T) {
 	type args struct {
@@ -69,7 +67,7 @@ func TestRepository_InsertToTariff(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			for _, msg := range tt.args.msg {
-				if _, err := d.Datastore.FeeExluder.InsertToTariff(nil, msg); (err != nil) != tt.wantErr {
+				if _, err := d.Datastore.FeeExcluder.InsertToTariff(nil, msg); (err != nil) != tt.wantErr {
 					t.Errorf("InsertToTariff() error = %v, wantErr %v", err, tt.wantErr)
 				}
 			}
@@ -95,7 +93,7 @@ func TestRepository_GetAllTariff(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			entity, err := d.Datastore.FeeExluder.GetAllTariff(tt.args.filter)
+			entity, err := d.Datastore.FeeExcluder.GetAllTariff(tt.args.filter)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetAllTariff() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -133,7 +131,7 @@ func TestRepository_UpdateTariff(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.UpdateTariff(nil, tt.args.id, tt.args.msg); (err != nil) != tt.wantErr {
+			if err := d.Datastore.FeeExcluder.UpdateTariff(nil, tt.args.id, tt.args.msg); (err != nil) != tt.wantErr {
 				t.Errorf("UpdateTariff() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -164,7 +162,7 @@ func TestRepository_DeleteTariff(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.FeeExluder.DeleteTariff(nil, tt.args.id); (err != nil) != tt.wantErr {
+			if err := d.Datastore.FeeExcluder.DeleteTariff(nil, tt.args.id); (err != nil) != tt.wantErr {
 				t.Errorf("DeleteTariff() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

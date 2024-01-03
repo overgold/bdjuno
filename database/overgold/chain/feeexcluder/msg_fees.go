@@ -136,7 +136,23 @@ func (r Repository) DeleteFees(tx *sqlx.Tx, id uint64) (err error) {
 	return nil
 }
 
-// getAllFeesWithUniqueID - method that get data from a db (overgold_feeexcluder_tariffs).
+// getFeesWithUniqueID - method that get data from a db (overgold_feeexcluder_fees).
+func (r Repository) getFeesWithUniqueID(req filter.Filter) (types.FeeExcluderFees, error) {
+	query, args := req.SetLimit(1).Build(tableFees)
+
+	var result types.FeeExcluderFees
+	if err := r.db.GetContext(context.Background(), &result, query, args...); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return types.FeeExcluderFees{}, errs.NotFound{What: tableFees}
+		}
+
+		return types.FeeExcluderFees{}, errs.Internal{Cause: err.Error()}
+	}
+
+	return result, nil
+}
+
+// getAllFeesListWithUniqueID - method that get data from a db (overgold_feeexcluder_fees).
 func (r Repository) getAllFeesWithUniqueID(f filter.Filter) ([]types.FeeExcluderFees, error) {
 	q, args := f.Build(tableFees)
 

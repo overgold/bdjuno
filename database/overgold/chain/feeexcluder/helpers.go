@@ -43,9 +43,7 @@ const (
 func commit(tx *sqlx.Tx, err error) {
 	if err != nil {
 		_ = tx.Rollback()
-	} else {
-		if err = tx.Commit(); err != nil {
-			err = errs.Internal{Cause: err.Error()}
-		}
+	} else if err = tx.Commit(); err != nil {
+		err = errs.Internal{Cause: err.Error()}
 	}
 }

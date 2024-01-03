@@ -1,16 +1,16 @@
 chain:
     bech32_prefix: ovg
     modules:
-        - actions
+#        - actions
         - auth
         - bank
-        - consensus
+#        - consensus
         - gov
         - messages
         - mint
         - modules
         - slashing
-        - staking
+#        - staking
         - overgold
 
 node:

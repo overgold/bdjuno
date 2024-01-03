@@ -15,7 +15,7 @@ func toGenesisStateDomain(
 	g db.FeeExcluderGenesisState,
 ) types.GenesisState {
 	return types.GenesisState{
-		Params:          types.Params{}, // it is ok, params always empty
+		Params:          types.Params{}, // it is ok, params are always empty
 		AddressList:     addresses,
 		AddressCount:    g.AddressCount,
 		DailyStatsList:  dailyStats,

@@ -32,20 +32,27 @@ func (r Repository) GetAllMsgDeleteTariffs(f filter.Filter) ([]fe.MsgDeleteTarif
 }
 
 // InsertToMsgDeleteTariffs - insert new data in a database (overgold_feeexcluder_delete_tariffs).
-func (r Repository) InsertToMsgDeleteTariffs(hash string, dt ...fe.MsgDeleteTariffs) error {
-	if len(dt) == 0 {
-		return nil
-	}
-
+func (r Repository) InsertToMsgDeleteTariffs(hash string, dt fe.MsgDeleteTariffs) error {
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
 		return errs.Internal{Cause: err.Error()}
 	}
 
-	defer func() {
-		_ = tx.Rollback()
-	}()
+	defer commit(tx, err)
 
+	// 1) get unique tariff id
+	tariff, err := r.getTariffWithUniqueID(filter.NewFilter().SetArgument(types.FieldMsgID, dt.TariffID))
+	if err != nil {
+		return err
+	}
+
+	// 2) get unique fees id
+	fees, err := r.getFeesWithUniqueID(filter.NewFilter().SetArgument(types.FieldMsgID, dt.FeeID))
+	if err != nil {
+		return err
+	}
+
+	// 3) insert delete tariffs
 	q := `
 		INSERT INTO overgold_feeexcluder_delete_tariffs (
 			tx_hash, creator, denom, tariff_id, fees_id
@@ -55,18 +62,12 @@ func (r Repository) InsertToMsgDeleteTariffs(hash string, dt ...fe.MsgDeleteTari
 			id, tx_hash, creator, denom, tariff_id, fees_id
 	`
 
-	for _, t := range dt {
-		m, err := toMsgDeleteTariffsDatabase(hash, 0, t)
-		if err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
-
-		if _, err = tx.Exec(q, m.TxHash, m.Creator, m.Denom, m.TariffID, m.FeesID); err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
+	m, err := toMsgDeleteTariffsDatabase(hash, 0, dt)
+	if err != nil {
+		return errs.Internal{Cause: err.Error()}
 	}
 
-	if err = tx.Commit(); err != nil {
+	if _, err = tx.Exec(q, m.TxHash, m.Creator, m.Denom, tariff.ID, fees.ID); err != nil {
 		return errs.Internal{Cause: err.Error()}
 	}
 

@@ -99,14 +99,10 @@ func (r Repository) UpdateStats(tx *sqlx.Tx, stats fe.Stats) (err error) {
 
 	// 1) update stats and get unique id for daily stats
 	// 1.a) get daily stats id via stats index
-	allStats, err := r.getAllStatsWithUniqueID(filter.NewFilter().SetArgument(types.FieldID, stats.Index))
+	s, err := r.getStatsWithUniqueID(filter.NewFilter().SetArgument(types.FieldID, stats.Index))
 	if err != nil {
 		return err
 	}
-	if len(allStats) != 1 {
-		return errs.Internal{Cause: "expected 1 stats"}
-	}
-	dailyStatsID := allStats[0].DailyStatsID
 
 	// 1.b) update stats
 	q := `UPDATE overgold_feeexcluder_stats SET
@@ -114,7 +110,7 @@ func (r Repository) UpdateStats(tx *sqlx.Tx, stats fe.Stats) (err error) {
 				 daily_stats_id = $2
 			 WHERE id = $3`
 
-	m, err := toStatsDatabase(dailyStatsID, stats)
+	m, err := toStatsDatabase(s.DailyStatsID, stats)
 	if err != nil {
 		return errs.Internal{Cause: err.Error()}
 	}
@@ -124,7 +120,7 @@ func (r Repository) UpdateStats(tx *sqlx.Tx, stats fe.Stats) (err error) {
 	}
 
 	// 2) update daily stats
-	if err = r.UpdateDailyStats(tx, dailyStatsID, *stats.Stats); err != nil {
+	if err = r.UpdateDailyStats(tx, s.DailyStatsID, *stats.Stats); err != nil {
 		return err
 	}
 
@@ -144,14 +140,10 @@ func (r Repository) DeleteStats(tx *sqlx.Tx, id string) (err error) {
 
 	// 1) delete stats and get unique id via stats index
 	// 1.a) get stats id via stats index
-	allStats, err := r.getAllStatsWithUniqueID(filter.NewFilter().SetArgument(types.FieldID, id))
+	s, err := r.getStatsWithUniqueID(filter.NewFilter().SetArgument(types.FieldID, id))
 	if err != nil {
 		return err
 	}
-	if len(allStats) != 1 {
-		return errs.Internal{Cause: "expected 1 stats"}
-	}
-	dailyStatsID := allStats[0].DailyStatsID
 
 	// 1.b) delete daily stats
 	q := `DELETE FROM overgold_feeexcluder_stats WHERE id IN ($1)`
@@ -161,11 +153,27 @@ func (r Repository) DeleteStats(tx *sqlx.Tx, id string) (err error) {
 	}
 
 	// 2) delete daily stats
-	if err = r.DeleteDailyStats(tx, dailyStatsID); err != nil {
+	if err = r.DeleteDailyStats(tx, s.DailyStatsID); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+// getStatsWithUniqueID - method that get data from a db (overgold_feeexcluder_stats).
+func (r Repository) getStatsWithUniqueID(req filter.Filter) (types.FeeExcluderStats, error) {
+	query, args := req.SetLimit(1).Build(tableStats)
+
+	var result types.FeeExcluderStats
+	if err := r.db.GetContext(context.Background(), &result, query, args...); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return types.FeeExcluderStats{}, errs.NotFound{What: tableStats}
+		}
+
+		return types.FeeExcluderStats{}, errs.Internal{Cause: err.Error()}
+	}
+
+	return result, nil
 }
 
 // getAllStatsWithUniqueID - method that get data from a db (overgold_feeexcluder_stats).
