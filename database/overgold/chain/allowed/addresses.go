@@ -87,11 +87,12 @@ func (r Repository) DeleteAddressesByAddress(addresses ...string) error {
 		return nil
 	}
 
-	q := `DELETE FROM overgold_allowed_addresses WHERE address IN ($1)`
-
-	if _, err := r.db.Exec(q, deleteAddressesDB{Address: addresses}); err != nil {
-		return errs.Internal{Cause: err.Error()}
-	}
+	// todo: just skip it for now, remove messages artifacts later in all the codebase
+	// q := `DELETE FROM overgold_allowed_addresses WHERE address IN ($1)`
+	//
+	// if _, err := r.db.Exec(q, deleteAddressesDB{Address: addresses}); err != nil {
+	// 	return errs.Internal{Cause: err.Error()}
+	// }
 
 	return nil
 }
