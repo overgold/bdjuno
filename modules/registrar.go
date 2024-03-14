@@ -1,6 +1,9 @@
 package modules
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/forbole/bdjuno/v4/modules/actions"
 	"github.com/forbole/bdjuno/v4/modules/overgold"
 	"github.com/forbole/bdjuno/v4/modules/types"
@@ -10,8 +13,6 @@ import (
 
 	"github.com/forbole/bdjuno/v4/modules/slashing"
 
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	jmodules "github.com/forbole/juno/v5/modules"
 	"github.com/forbole/juno/v5/modules/messages"
 	"github.com/forbole/juno/v5/modules/registrar"
