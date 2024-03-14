@@ -74,7 +74,7 @@ func (r Repository) InsertMsgDeleteSystemStakeAccountAddress(hash string, msgs .
 
 	q := `
 		INSERT INTO overgold_stake_delete_system_stake_account_address (tx_hash, creator) 
-		VALUES ($1, $2, $3)
+		VALUES ($1, $2)
 	`
 
 	for _, msg := range msgs {
