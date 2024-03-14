@@ -38,7 +38,7 @@ func (r Repository) InsertMsgTransferFromUser(hash string, msgs ...stake.MsgTran
 	}
 
 	q := `
-		INSERT INTO overgold_stake_transfer_from_user ( tx_hash, creator, amount, address) 
+		INSERT INTO overgold_stake_transfer_from_user (tx_hash, creator, amount, address) 
 		VALUES ( $1, $2, $3, $4 )
 	`
 

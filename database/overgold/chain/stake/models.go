@@ -231,3 +231,44 @@ func toMsgTransferToUserDatabase(hash string, m types.MsgTransferToUser) (db.Sta
 		Address: m.Address,
 	}, nil
 }
+
+// toMsgCreateSystemStakeAccountAddressDatabase - mapping func to a database model.
+func toMsgCreateSystemStakeAccountAddressDatabase(hash string, m types.MsgCreateSystemStakeAccountAddress) (db.StakeMsgCreateSystemStakeAccountAddress, error) {
+	return db.StakeMsgCreateSystemStakeAccountAddress{
+		TxHash:  hash,
+		Creator: m.Creator,
+		Address: m.Address,
+	}, nil
+}
+
+// toMsgUpdateSystemStakeAccountAddressDatabase - mapping func to a database model.
+func toMsgUpdateSystemStakeAccountAddressDatabase(hash string, m types.MsgUpdateSystemStakeAccountAddress) (db.StakeMsgUpdateSystemStakeAccountAddress, error) {
+	return db.StakeMsgUpdateSystemStakeAccountAddress{
+		TxHash:  hash,
+		Creator: m.Creator,
+		Address: m.Address,
+	}, nil
+}
+
+// toMsgDeleteSystemStakeAccountAddressDatabase - mapping func to a database model.
+func toMsgDeleteSystemStakeAccountAddressDatabase(hash string, m types.MsgDeleteSystemStakeAccountAddress) (db.StakeMsgDeleteSystemStakeAccountAddress, error) {
+	return db.StakeMsgDeleteSystemStakeAccountAddress{
+		TxHash:  hash,
+		Creator: m.Creator,
+	}, nil
+}
+
+// toMsgManageSystemStakeDatabase - mapping func to a database model.
+func toMsgManageSystemStakeDatabase(hash string, m types.MsgManageSystemStake) (db.StakeMsgManageSystemStake, error) {
+	amount, err := strconv.ParseUint(m.Amount, 10, 64)
+	if err != nil {
+		return db.StakeMsgManageSystemStake{}, errs.Internal{Cause: err.Error()}
+	}
+
+	return db.StakeMsgManageSystemStake{
+		TxHash:  hash,
+		Creator: m.Creator,
+		Amount:  amount,
+		Kind:    m.Kind,
+	}, nil
+}

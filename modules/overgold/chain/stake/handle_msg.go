@@ -27,6 +27,14 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return m.handleMsgTransferFromUser(tx, index, stakeMsg)
 	case *types.MsgTransferToUser:
 		return m.handleMsgTransferToUser(tx, index, stakeMsg)
+	case *types.MsgCreateSystemStakeAccountAddress:
+		return m.handleMsgCreateSystemStakeAccountAddress(tx, index, stakeMsg)
+	case *types.MsgUpdateSystemStakeAccountAddress:
+		return m.handleMsgUpdateSystemStakeAccountAddress(tx, index, stakeMsg)
+	case *types.MsgDeleteSystemStakeAccountAddress:
+		return m.handleMsgDeleteSystemStakeAccountAddress(tx, index, stakeMsg)
+	case *types.MsgManageSystemStake:
+		return m.handleMsgManageSystemStake(tx, index, stakeMsg)
 	default:
 		return nil
 	}

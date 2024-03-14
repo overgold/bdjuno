@@ -1,8 +1,6 @@
 package overgold
 
 import (
-	"sync"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/forbole/juno/v5/logging"
 	jmodules "github.com/forbole/juno/v5/modules"
@@ -43,9 +41,6 @@ type Module struct {
 	logger          logging.Logger
 	overgoldModules []overgoldModule
 	node            node.Node
-
-	schedulerRun bool
-	mutex        sync.RWMutex
 }
 
 func NewModule(
@@ -54,12 +49,12 @@ func NewModule(
 	node node.Node,
 	logger logging.Logger,
 
-	OverGoldAllowedSource overgoldAllowedSource.Source,
-	OverGoldBankSource overgoldBankSource.Source,
-	OverGoldCoreSource overgoldCoreSource.Source,
-	OverGoldFeeExcluderSource overgoldFeeExcluderSource.Source,
-	OverGoldReferralSource overgoldReferralSource.Source,
-	OverGoldStakeSource overgoldStakeSource.Source,
+	overGoldAllowedSource overgoldAllowedSource.Source,
+	overGoldBankSource overgoldBankSource.Source,
+	overGoldCoreSource overgoldCoreSource.Source,
+	overGoldFeeExcluderSource overgoldFeeExcluderSource.Source,
+	overGoldReferralSource overgoldReferralSource.Source,
+	overGoldStakeSource overgoldStakeSource.Source,
 ) *Module {
 	module := &Module{
 		cdc:           cdc,
@@ -69,14 +64,14 @@ func NewModule(
 		logger:        logger,
 		overgoldModules: []overgoldModule{
 			// OverGold modules
-			allowed.NewModule(OverGoldAllowedSource, cdc, db),
-			core.NewModule(OverGoldCoreSource, cdc, db),
-			feeexcluder.NewModule(OverGoldFeeExcluderSource, cdc, db),
-			referral.NewModule(OverGoldReferralSource, cdc, db),
-			stake.NewModule(OverGoldStakeSource, cdc, db),
+			allowed.NewModule(overGoldAllowedSource, cdc, db),
+			core.NewModule(overGoldCoreSource, cdc, db),
+			feeexcluder.NewModule(overGoldFeeExcluderSource, cdc, db),
+			referral.NewModule(overGoldReferralSource, cdc, db),
+			stake.NewModule(overGoldStakeSource, cdc, db),
 
 			// custom SDK modules
-			customBank.NewModule(OverGoldBankSource, cdc, db),
+			customBank.NewModule(overGoldBankSource, cdc, db),
 		},
 	}
 
