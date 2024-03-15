@@ -174,6 +174,12 @@ type (
 
 		GetAllMsgTransferToUser(filter filter.Filter) ([]stake.MsgTransferToUser, error)
 		InsertMsgTransferToUser(hash string, msgs ...stake.MsgTransferToUser) error
+
+		InsertMsgCreateSystemStakeAccountAddress(hash string, msgs ...stake.MsgCreateSystemStakeAccountAddress) error
+		InsertMsgUpdateSystemStakeAccountAddress(hash string, msgs ...stake.MsgUpdateSystemStakeAccountAddress) error
+		InsertMsgDeleteSystemStakeAccountAddress(hash string, msgs ...stake.MsgDeleteSystemStakeAccountAddress) error
+
+		InsertMsgManageSystemStake(hash string, msgs ...stake.MsgManageSystemStake) error
 	}
 )
 
